@@ -179,7 +179,8 @@ jQuery.extend( Khan.answerTypes, {
 	},
 
 	radio: function( solutionarea, solution ) {
-		var solutionText = solution.text();
+		// Without this we get numbers twice and things sometimes
+		var solutionText = jQuery( solution ).contents( ":not(.MathJax)" ).text();
 
 		var list = jQuery("<ul></ul>");
 		jQuery( solutionarea ).append(list);
@@ -214,6 +215,10 @@ jQuery.extend( Khan.answerTypes, {
 		// Add the correct answer
 		if( !noneIsCorrect && !isCategory) {
 			jQuery( solution ).data( "correct", true );
+		}
+
+		// Insert correct answer as first of possibleChoices
+		if ( !isCategory ) {
 			possibleChoices.splice( 0, 0, solution );
 		}
 
@@ -230,7 +235,10 @@ jQuery.extend( Khan.answerTypes, {
 			if ( !dupes[ choice.text() ] ) {
 				dupes[ choice.text() ] = true;
 
-				shownChoices.push( choice );
+				// i == 0 is the solution except in category mode; skip it when none is correct
+				if ( !( noneIsCorrect && i == 0 ) || isCategory ) {
+					shownChoices.push( choice );
+				}
 			}
 		}
 
