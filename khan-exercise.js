@@ -81,7 +81,6 @@ var Khan = {
 		"calculus": [ "math", "expressions", "polynomials" ],
 		"exponents": [ "math", "math-format" ],
 		"kinematics": [ "math" ],
-		"math-table": [ "math" ],
 		"math-format": [ "math", "expressions" ],
 		"polynomials": [ "math", "expressions" ],
 		"stat": [ "math" ],
@@ -263,7 +262,7 @@ var Khan = {
 				elem = jQuery( elem );
 				elem.data( "id", elem.attr( "id" ) || "" + i );
 
-				for( var j = 0; j < Khan.problemCount; j++ ) {
+				for ( var j = 0; j < Khan.problemCount; j++ ) {
 					bag.push( problems.eq( i ) );
 				}
 			} );
@@ -296,7 +295,7 @@ var Khan = {
 				return weight;
 			});
 
-			while( n ) {
+			while ( n ) {
 				bag.push( (function() {
 					// Figure out which item we're going to pick
 					var index = totalWeight * KhanUtil.random();
@@ -579,6 +578,8 @@ var Khan = {
 			// for special style rules
 			jQuery( "body" ).addClass("debug");
 		}
+		
+		jQuery(Khan).trigger( "newProblem" );
 	},
 
 	injectSite: function( html ) {
@@ -592,9 +593,14 @@ var Khan = {
 		jQuery( ".summary" ).hide();
 
 		// Watch for a solution submission
-		jQuery("#check-answer-button").click(function(ev) {
+		jQuery("#check-answer-button").click( handleSubmit );
+		jQuery("#answerform").submit( handleSubmit );
+		
+		function handleSubmit() {
+			var pass = Khan.validator();
+			
 			// Figure out if the response was correct
-			if ( Khan.validator() ) {
+			if ( pass ) {
 				// Show a congratulations message
 				jQuery("#oops").hide();
 				jQuery("#congrats").show();
@@ -616,7 +622,11 @@ var Khan = {
 				jQuery("#happy").hide();
 				jQuery("#sad").show();
 			}
-		});
+			
+			jQuery(Khan).trigger( "checkAnswer", pass );
+			
+			return false;
+		}
 
 		// Watch for when the next button is clicked
 		jQuery("#next-question-button").click(function(ev) {
@@ -706,6 +716,8 @@ var Khan = {
 					jQuery( this ).attr( "disabled", true );
 				}
 			}
+			
+			jQuery(Khan).trigger( "showHint" );
 		});
 
 		jQuery( "#print_ten" ).data( "show", true )
@@ -771,7 +783,7 @@ var Khan = {
 			jQuery( "#answer_area" ).prepend(
 				'<div id="tester-info" class="info-box">' +
 					'<span class="info-box-header">Testing Mode</span>' +
-					'<p><strong>Problem No.</strong> <span class="problem-no">hm.</span></p>' +
+					'<p><strong>Problem No.</strong> <span class="problem-no"></span></p>' +
 					'<p><strong>Answer:</strong> <span class="answer"></span></p>' +
 					'<p>' +
 						'<input type="button" class="pass button green" value="This problem was generated correctly.">' +
@@ -815,6 +827,151 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 	Khan.require( [ "answer-types", "tmpl" ] );
 
 	Khan.require( document.documentElement.getAttribute("data-require") );
+	
+	var server = "http://khan-masterslave.appspot.com",
+		staticServer = "http://www.khanacademy.org",
+		exerciseName = (/([^\/]+).html$/.exec( window.location ) || [])[1],
+		hintUsed,
+		problemStarted,
+		doSave,
+		doHintSave,
+		once = true;
+	
+	jQuery(Khan).bind({
+		// The user is generating a new problem
+		newProblem: function() {
+			doSave = true;
+			doHintSave = true;
+			hintUsed = false;
+			problemStarted = (new Date).getTime();
+			
+			if ( once ) {
+				updateBar();
+				once = false;
+			}
+		},
+		
+		// The user checked to see if an answer was valid
+		checkAnswer: function( e, pass ) {
+			if ( !doSave ) {
+				return;
+			}
+			
+			// Assume we're starting with the first problem
+			var problemNum = getData().total_done + 1,
+				
+				// Build the data to pass to the server
+				data = {
+					// The user answered correctly
+					correct: pass ? 1 : 0,
+			
+					// The user used a hint
+					hint_used: hintUsed ? 1 : 0,
+			
+					// How long it took them to complete the problem
+					time_taken: Math.round(((new Date).getTime() - problemStarted) / 1000)
+				};
+		
+			// Save the problem results to the server
+			request( "problem/" + problemNum + "/complete", data, function() {
+				updateBar();
+				
+				// TODO: Save locally if offline
+				jQuery(Khan).trigger( "answerSaved" );
+			});
+			
+			// Make sure we don't save the result to the server more than once
+			doSave = false;
+		},
+		
+		// A user revealed a hint
+		showHint: function() {
+			// Don't reset the streak if we've already reset it or if
+			// we've already sent in an answer
+			if ( !doSave || !doHintSave ) {
+				return;
+			}
+			
+			hintUsed = true;
+			request( "reset_streak", {}, updateBar );
+			
+			// Make sure we don't reset the streak more than once
+			doHintSave = false;
+		}
+	});
+	
+	// Load in video list from the API
+	jQuery.ajax({
+		// Do a request to the server API
+		url: staticServer + "/api/v1/exercises/" + exerciseName + "/videos",
+		type: "GET",
+		dataType: "json",
+	
+		// Display all the related videos
+		success: function( videos ) {
+			if ( videos && videos.length ) {
+				jQuery.each( videos, function( i, video ) {
+					jQuery("<li><a href='" + video.ka_url + "'><span class='video-title'>" +
+						video.title + "</span></a></li>")
+							.appendTo(".related-video-list");
+				});
+			
+				jQuery(".related-content, #related-video-content").show();
+			}
+		}
+	});
+	
+	function request( method, data, fn ) {
+		jQuery.ajax({
+			// Do a request to the server API
+			url: server + "/api/v1/user/exercises/" + exerciseName + "/" + method,
+			type: data == null ? "GET" : "POST",
+			data: data,
+			dataType: "json",
+			
+			// Make sure cookies are passed along
+			xhrFields: { withCredentials: true },
+		
+			// Backup the response locally, for later use
+			success: function( data ) {
+				window.localStorage[ "exercise:" + exerciseName ] = JSON.stringify( data );
+				
+				if ( jQuery.isFunction( fn ) ) {
+					fn( data );
+				}
+			},
+			
+			// Handle error edge case
+			error: fn
+		});
+	}
+	
+	function updateBar() {
+		var stats = getData();
+		
+		jQuery(".current-rating").width( Math.min( Math.min( stats.streak, 10 ) * 23, 228 ) );
+		jQuery(".streak-icon").width( stats.streak ? 46 : 0 );
+		jQuery(".best-label").width( Math.min( Math.min( stats.longest_streak, 10 ) * 23, 228 ) ).html( stats.longest_streak + "&nbsp;" );
+		jQuery(".current-label").width( Math.min( Math.min( stats.streak, 10 ) * 23, 228 ) ).html( stats.streak + "&nbsp;" );
+		jQuery("#exercise-points").text( " " + stats.next_points + " " );
+	}
+	
+	function getData() {
+		var data = window.localStorage[ "exercise:" + exerciseName ];
+		
+		if ( data ) {
+			return JSON.parse( data );
+		
+		} else {
+			return {
+				total_done: 0,
+				total_correct: 0,
+				streak: 0,
+				longest_streak: 0,
+				next_points: 225
+			};
+		}
+	}
 
 	var remoteCount = 0;
 

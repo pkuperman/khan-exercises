@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html data-require="math graphie graphie-helpers">
+<head>
+	<title>Changing Mixed Numbers and Improper Fractions</title>
+	<script src="../khan-exercise.js"></script>
+</head>
+<body>
+	<div class="exercise">
+		<div class="vars">
+			<var id="WHOLE">randRange( 1, 5 )</var>
+			<var id="DENOM">randRange( 2, 8 )</var>
+			<var id="NUMER">randRange( 1, DENOM - 1 )</var>
+
+			<var id="DIVIDEND_DIGITS">integerToDigits( WHOLE * DENOM + NUMER )</var>
+			<var id="DIVISOR_DIGITS">integerToDigits( DENOM )</var>
+			<var id="B_LCM">getGCD( abs( NUMER ), abs( DENOM ) )</var>
+		</div>
+
+		<div class="problems">
+
+			<div id="mixed-to-improper">
+				<p class="question">Write <code><var>WHOLE</var>\frac{ <var>NUMER</var> }{ <var>DENOM</var> }</code> as an improper fraction.</p>
+				<p class="solution" data-type="rational" data-simplify="optional"><var>( WHOLE * DENOM + NUMER ) / DENOM</var></p> 
+				<div class="hints">
+					<p><code><var>WHOLE</var>\frac{ <var>NUMER</var> }{ <var>DENOM</var> } = <var>WHOLE</var> + \frac{ <var>NUMER</var> }{ <var>DENOM</var> }</code></p>
+					<p><code>\frac{ <var>WHOLE * DENOM</var> }{ <var>DENOM</var> } + \frac{ <var>NUMER</var> }{ <var>DENOM</var> } = \frac{ <var>( WHOLE * DENOM + NUMER )</var> }{ <var>DENOM</var> }</code></p>
+					<p>The answer is <code>\frac{ <var>( WHOLE * DENOM + NUMER )</var> }{ <var>DENOM</var> }</code>.</p>
+				</div>
+			</div>
+
+
+			<div id="improper-to-mixed">
+				<p class="question">Write <code>\frac{ <var>( WHOLE * DENOM + NUMER )</var> }{ <var>DENOM</var> }</code> as a mixed number. Simplify your answer to lowest terms.</p>
+				<div class="solution" data-type="multiple">
+					<p><span class="sol" data-type="text"><var>WHOLE</var></span> 
+					   <span class="sol" data-type="rational"><var>NUMER / DENOM</var></span></p>
+				</div>
+				<div class="hints">
+					<div>
+						<div class="graphie" id="numbers">
+							init({
+								range: [ [ -10 - DIVISOR_DIGITS.length, DIVIDEND_DIGITS.length + 2 ], [ DIVIDEND_DIGITS.length * -2 + 5, 1 ] ],
+								scale: [ 30, 45 ]
+							});
+							style({
+								strokeWidth: 1
+							});
+
+							drawDigits( DIVISOR_DIGITS, -0.5 - DIVISOR_DIGITS.length, 0, true );
+							drawDigits( DIVIDEND_DIGITS, 0, 0, true );
+							path( [ [ -0.75, -0.5 ], [ -0.75, 0.5 ], [ DIVIDEND_DIGITS.length, 0.5 ] ] );
+						</div>
+						<p>How many times does <var>DENOM</var> go into <var>( WHOLE * DENOM + NUMER )</var>?</p>
+					</div>
+					<p><var>WHOLE</var> times with a remainder of <var>NUMER</var>.</p>
+					<p>This gives <code><var>WHOLE</var>\frac{ <var>NUMER</var> }{ <var>DENOM</var> }</code>.</p>
+					<p data-if="getGCD( abs( NUMER ), abs( DENOM ) ) > 1">Reducing to lowest terms, <code><var>WHOLE</var>\frac{ <var>NUMER / getGCD( abs( NUMER ), abs( DENOM ) )</var> }{ <var>DENOM / getGCD( abs( NUMER ), abs( DENOM ) )</var> }</code>.</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>
+
