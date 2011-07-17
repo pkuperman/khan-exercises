@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html data-require="math math-format graphie graphie-helpers">
+<head>
+	<title>Adding and Subtracting Mixed Numbers 1</title>
+	<script src="../khan-exercise.js"></script>
+</head>
+
+<!--
+NEED TO ADD COLOR TO HINTS
+17 2/9 + 5 1/9 = 17 + 5 + 2/9 + 1/9
+black-----------red  grey red grey (plus signs are black)
+
+NEED TO ADD 2-4 #s, NOT JUST 2
+
+NEED TO MAKE 2 EXERCISES
+
+Adding & Subtracting Mixed Numbers 1
+
+Only positive numbers
+
+Adding & Subtracting Mixed Numbers 2
+
+Can be negative numbers as well (e.g. 3 1/2 - (- 5 2/5)
+-->
+
+<body>
+	<div class="exercise">
+
+		<div class="problems">
+			<div id="two-numbers">
+				<div class="vars">
+
+					<var id="PM">randRangeNonZero( -1, 1 )</var>
+					<var id="SIGN">( PM === 1 ? "+" : "-")</var>
+					<var id="WHOLE1">randRange( 2, 19 )</var>
+					<var id="WHOLE2">( PM === 1 ? randRange( 1, 19 ) : randRange( -WHOLE1 + 1, -1 ))</var>
+
+					<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
+						<var id="D1">randRange( 3, 20 )</var>
+						<var id="D2">randRange( 3, 20 )</var>
+					</div>
+					<div data-ensure="( PM === 1 ? (N1 / D1) + (N2 / D2) < 1 : (N1 / D1) + PM * (N2 / D2) > 0)">
+						<var id="N1">randRange( 1, D1 - 1 )</var>
+						<var id="N2">randRange( 1, D2 - 1 )</var>
+					</div>
+					<var id="LCM">getLCM( D1, D2 )</var>
+					<var id="GCD">getGCD( N1 * LCM / D1 + PM * N2 * LCM / D2 , LCM )</var>
+
+				</div>
+
+				<p class="problem">Write the following as a mixed number. Simplify your answer to lowest terms.</p>
+				<p class="question"><code><var>expr(["+", WHOLE1 + fraction( N1, D1 ), WHOLE2 + fraction( N2, D2 )])</var> = ?</code></p>
+				<div class="solution" data-type="multiple">
+					<p><span class="sol" data-type="text"><var>WHOLE1 + WHOLE2</var></span> 
+					   <span class="sol" data-type="rational"><var>( N1 * D2 + PM * N2 * D1 ) / ( D1 * D2 )</var></span></p>
+				</div>
+
+				<div class="hints">
+					<p><code><var>expr(["+", WHOLE1, fraction( N1, D1 ), WHOLE2, fraction( PM * N2, D2 )])</var></code> (separate the terms)</p>
+					<p><code><var>expr(["+", WHOLE1, WHOLE2, fraction( N1, D1 ), fraction( PM * N2, D2 )])</var></code> (put whole #s and fractions together)</p>
+					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 * LCM / D1, LCM ),fraction( PM * N2 * LCM / D2, LCM  )])</var></code> (find a common denominator for the fractions)</p>
+					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )])</var> = <var>WHOLE1 + WHOLE2 + fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code> (Calculate each part, then combine)</p>
+					<p data-if="GCD > 1">Reducing to lowest terms, <code><var>WHOLE1 + WHOLE2 + fractionReduce( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code>.</p>
+				</div>
+			</div>
+		</div>
+
+</body>
+</html>
