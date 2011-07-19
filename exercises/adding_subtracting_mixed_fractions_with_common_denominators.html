@@ -40,7 +40,7 @@ black-----------red  grey red grey (plus signs are black)
 					<p><code><var>expr(["+", WHOLE1, fraction( N1, D ), WHOLE2, fraction( PM * N2, D )])</var></code> (separate the terms)</p>
 					<p><code><var>expr(["+", WHOLE1, WHOLE2, fraction( N1, D ), fraction( PM * N2, D )])</var></code> (put whole #s and fractions together)</p>
 					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 + PM * N2, D )])</var> = <var>WHOLE1 + WHOLE2 + fraction( N1 + PM * N2, D )</var></code> (Calculate each part, then combine)</p>
-					<p data-if="GCD > 1">Reducing to lowest terms, <code><var>WHOLE1 + WHOLE2</var><var>fractionReduce( ( N1 + PM * N2 ), D )</var></code>.</p>
+					<p data-if="GCD > 1">Simplifying to lowest terms, <code><var>WHOLE1 + WHOLE2</var><var>fractionReduce( ( N1 + PM * N2 ), D )</var></code>.</p>
 				</div>
 			</div>
 		</div>
