@@ -15,11 +15,14 @@
 						<var id="D1">randRange( 3, 20 )</var>
 						<var id="D2">randRange( 3, 20 )</var>
 					</div>
-					<var id="N1">randRange( 1, D1 - 1 )</var>
-					<var id="N2">randRange( 1, D2 - 1 )</var>
 					<var id="LCM">getLCM( D1, D2 )</var>
 					<var id="F1">LCM / D1</var>
 					<var id="F2">LCM / D2</var>
+
+					<div data-ensure="( N1 * F1 - N2 * F2 ) > 0">
+						<var id="N1">randRange( 1, D1 - 1 )</var>
+						<var id="N2">randRange( 1, D2 - 1 )</var>
+					</div>
 
 					<var id="W">(((N1 * F1 + N2 * F2) - (N1 * F1 + N2 * F2) % LCM ) / LCM )</var>
 				</div>
