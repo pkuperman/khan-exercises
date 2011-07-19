@@ -596,7 +596,7 @@ var Khan = {
 		jQuery("#check-answer-button").click( handleSubmit );
 		jQuery("#answerform").submit( handleSubmit );
 		
-		function handleSubmit() {
+		function handleSubmit( e ) {
 			var pass = Khan.validator();
 			
 			// Figure out if the response was correct
@@ -624,7 +624,9 @@ var Khan = {
 			}
 			
 			jQuery(Khan).trigger( "checkAnswer", pass );
-			
+
+			// Why is this necessary along with the return false? Not sure. Chrome needs it, at least.
+			e.preventDefault();
 			return false;
 		}
 
@@ -798,10 +800,26 @@ var Khan = {
 			} );
 
 			jQuery( "#tester-info .fail" ).click( function() {
-				Khan.dataDump.problems[ Khan.dataDump.problems.length - 1 ].pass =
-					prompt( "Please write a short description of the error, then click OK." );
-				jQuery( "#next-question-button" ).trigger( "click" );
+				var description = prompt( "Please write a short description of the error, then click OK." );
+
+				// Don't do anything on clicking Cancel
+				if ( description != null ) {
+					Khan.dataDump.problems[ Khan.dataDump.problems.length - 1 ].pass = description;
+					jQuery( "#next-question-button" ).trigger( "click" );
+				}
 			} );
+
+			jQuery( "body" ).keyup( function( e ) {
+				if ( e.keyCode === "H".charCodeAt( 0 ) ) {
+					jQuery( "#hint" ).click();
+				}
+				if ( e.keyCode === "Y".charCodeAt( 0 ) ) {
+					jQuery( "#tester-info .pass" ).click();
+				}
+				if ( e.keyCode === "N".charCodeAt( 0 ) ) {
+					jQuery( "#tester-info .fail" ).click();
+				}
+			});
 		}
 
 		// Prepare for the debug info if requested
@@ -835,6 +853,7 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		problemStarted,
 		doSave,
 		doHintSave,
+		user = window.localStorage["exercise:lastUser"],
 		once = true;
 	
 	jQuery(Khan).bind({
@@ -846,7 +865,7 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 			problemStarted = (new Date).getTime();
 			
 			if ( once ) {
-				updateBar();
+				updateData();
 				once = false;
 			}
 		},
@@ -874,8 +893,6 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		
 			// Save the problem results to the server
 			request( "problem/" + problemNum + "/complete", data, function() {
-				updateBar();
-				
 				// TODO: Save locally if offline
 				jQuery(Khan).trigger( "answerSaved" );
 			});
@@ -893,7 +910,7 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 			}
 			
 			hintUsed = true;
-			request( "reset_streak", {}, updateBar );
+			request( "reset_streak" );
 			
 			// Make sure we don't reset the streak more than once
 			doHintSave = false;
@@ -925,7 +942,7 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		jQuery.ajax({
 			// Do a request to the server API
 			url: server + "/api/v1/user/exercises/" + exerciseName + "/" + method,
-			type: data == null ? "GET" : "POST",
+			type: "POST",
 			data: data,
 			dataType: "json",
 			
@@ -934,7 +951,8 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		
 			// Backup the response locally, for later use
 			success: function( data ) {
-				window.localStorage[ "exercise:" + exerciseName ] = JSON.stringify( data );
+				// Update the visual representation of the points/streak
+				updateData( data );
 				
 				if ( jQuery.isFunction( fn ) ) {
 					fn( data );
@@ -946,22 +964,36 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		});
 	}
 	
-	function updateBar() {
-		var stats = getData();
+	// Update the visual representation of the points/streak
+	function updateData( data ) {
+		// Make sure we have current data
+		data = data || getData();
 		
-		jQuery(".current-rating").width( Math.min( Math.min( stats.streak, 10 ) * 23, 228 ) );
-		jQuery(".streak-icon").width( stats.streak ? 46 : 0 );
-		jQuery(".best-label").width( Math.min( Math.min( stats.longest_streak, 10 ) * 23, 228 ) ).html( stats.longest_streak + "&nbsp;" );
-		jQuery(".current-label").width( Math.min( Math.min( stats.streak, 10 ) * 23, 228 ) ).html( stats.streak + "&nbsp;" );
-		jQuery("#exercise-points").text( " " + stats.next_points + " " );
+		// Change users, if needed
+		user = data.user;
+		
+		// Cache the data locally
+		if ( data ) {
+			window.localStorage[ "exercise:" + user + ":" + exerciseName ] = JSON.stringify( data );
+		}
+		
+		// Update the streaks/point bar
+		jQuery(".current-rating").width( Math.min( Math.min( data.streak, 10 ) * 23, 228 ) );
+		jQuery(".streak-icon").width( data.streak ? 46 : 0 );
+		jQuery(".best-label").width( Math.min( Math.min( data.longest_streak, 10 ) * 23, 228 ) ).html( data.longest_streak + "&nbsp;" );
+		jQuery(".current-label").width( Math.min( Math.min( data.streak, 10 ) * 23, 228 ) ).html( data.streak + "&nbsp;" );
+		jQuery("#exercise-points").text( " " + data.next_points + " " );
 	}
 	
+	// Grab the cached UserExercise data from local storage
 	function getData() {
-		var data = window.localStorage[ "exercise:" + exerciseName ];
+		var data = window.localStorage[ "exercise:" + user + ":" + exerciseName ];
 		
+		// Parse the JSON if it exists
 		if ( data ) {
 			return JSON.parse( data );
 		
+		// Otherwise we contact the server
 		} else {
 			return {
 				total_done: 0,

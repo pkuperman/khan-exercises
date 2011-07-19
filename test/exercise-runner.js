@@ -26,7 +26,7 @@ jQuery.extend(Khan, {
 		});
 
 		jQuery.each( json.problems, function( index, problem, next ) {
-			asyncTest( exerciseName + " / " + problem.type + " / " + problem.seed, function() {
+			asyncTest( problem.type + " / " + problem.seed, function() {
 				var iwindow = iframe[0].contentWindow;
 				var iKhan = iwindow.Khan;
 
@@ -41,11 +41,13 @@ jQuery.extend(Khan, {
 					var VARS = iwindow.jQuery.tmpl.VARS;
 
 					for ( var key in problem.VARS ) {
-						deepEqual( VARS[key], problem.VARS[key], "var " + key );
+						// Removes unserializable properties like functions (e.g., on polynomial objects)
+						var vark = JSON.parse( JSON.stringify( VARS[key] ) );
+						deepEqual( vark, problem.VARS[key], "var " + key );
 					}
 
-					deepEqual( iKhan.validator.solution, problem.solution, "solution" )
-					strictEqual( problem.pass, true, "pass" )
+					deepEqual( iKhan.validator.solution, problem.solution, "solution" );
+					strictEqual( problem.pass, true, "pass" );
 
 					start();
 				} );
