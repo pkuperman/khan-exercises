@@ -23,7 +23,7 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 	bins = 200,
 
 	// Get the username of the user
-	user = window.localStorage["exercise:lastUser"] || "anonymous",
+	user = window.localStorage["exercise:lastUser"] || null,
 
 	// How far to jump through the problems
 	jumpNum,
@@ -349,7 +349,8 @@ var Khan = {
 			Khan.randomSeed = seed;
 		
 		// Otherwise set the seed from the problem number
-		} else if ( Khan.query.test == null ) {
+		// Only do so if we're not in test mode and if we have a username
+		} else if ( Khan.query.test == null && user != null ) {
 			Khan.randomSeed = problemNum;
 		}
 
@@ -514,15 +515,14 @@ var Khan = {
 		if ( Khan.query.test != null ) {
 			var testerInfo = jQuery( "#tester-info" );
 
-			var lastProblem = {
+			// Deep clone the elements to avoid some straaaange bugs
+			var lastProblem = jQuery.extend( true, {}, {
 				seed: Khan.problemSeed,
 				type: problemID,
 				VARS: jQuery.tmpl.VARS,
 				solution: Khan.validator.solution
-			};
+			} );
 
-			// Clone lastProblem to avoid some straaaange bugs
-			lastProblem = JSON.parse( JSON.stringify( lastProblem ) );
 			Khan.dataDump.problems.push( lastProblem );
 
 			jQuery( testerInfo ).find( ".problem-no" )
@@ -1029,14 +1029,16 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 	
 	// TODO: Do this when I get the initial user/exercises response back from the server
 	
-	// How far to jump through the problems
-	jumpNum = primes[ crc32( user ) % primes.length ];
+	if ( user != null ) {
+		// How far to jump through the problems
+		jumpNum = primes[ crc32( user ) % primes.length ];
 	
-	// The starting problem of the user
-	problemNum = crc32( user ) % bins;
+		// The starting problem of the user
+		problemNum = crc32( user ) % bins;
 	
-	// Advance to the current problem seed
-	nextProblem( getData().total_done );
+		// Advance to the current problem seed
+		nextProblem( getData().total_done );
+	}
 	
 	// Load in video list from the API
 	jQuery.ajax({
@@ -1094,7 +1096,7 @@ Khan.loadScripts( [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/j
 		user = data.user;
 		
 		// Cache the data locally
-		if ( data ) {
+		if ( data && user != null ) {
 			window.localStorage[ "exercise:" + user + ":" + exerciseName ] = JSON.stringify( data );
 		}
 		
