@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html data-require="math expressions">
+<head>
+	<title>Equivalent Expressions 1</title>
+	<script src="../khan-exercise.js"></script>
+
+</head>
+
+<!--
+
+2 * 34 = 34 * ? AND REVERSE, +,  -
+
+(4 * 12) * 8 = ? * (12 * 8) QUESTION ? IN 3 PLACES, + *
+
+3 + 7 + 5 = 5 + ? + 7 QUESTION ? IN 3 PLACES * 2 potential orders 
+
+4 * (12 + 4) = ? + 16 ? in two places
+
+12 + 15 = ? * (4 + 5) ? in three places
+
+Rand 1-2, if 1 show one way, if 2 show the other
+Rand 1-3, if 1 show one way, if 2 show the other
+
+-->
+<body>
+	<div class="exercise">
+		<div class="vars">
+			<var id="A">randRange( 2, 19 )</var>
+			<var id="B" data-ensure="A !== B">randRange( 2, 19 )</var>
+			<var id="SIGN">(randRange( 1, 2 ) === 1 ? " + " : " \times " )</var>
+			<var id="MISSING">randRange( 1, 2 )<var>
+		</div>
+
+		<div class="problems">
+			<div>
+				<p class="problem">Fill in the missing terms to make these expressions equivalent. Also identify which property was applied.</p>
+				<p class="question"><code><var>A</var> \times x = \color{orange}{<var>expr(["*", A, "x"])</var>}</code></p>
+				<div class="solution" data-type="decimal"><var>A</var></div>
+				<div class="hints">
+					<p>Applying the commutative rule, <code><var>A SIGN B = B SIGN A</var></code></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
