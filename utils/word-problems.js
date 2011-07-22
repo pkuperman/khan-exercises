@@ -32,6 +32,7 @@ jQuery.extend( KhanUtil, {
 	//		- return "NUMBER word"
 	plural: (function() {
 		var oneOffs = {
+			'foot': 'feet',
 			'quiz': 'quizzes',
 			'shelf': 'shelves',
 			'loaf': 'loaves',
@@ -217,6 +218,24 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 		"cake"
 	]);
 
+	var bugs = KhanUtil.shuffle([
+		"ant",
+		"caterpillar",
+		"beetle",
+		"worm",
+		"snail",
+		"centipede",
+		"ladybug"
+	]);
+
+	var lengths = KhanUtil.shuffle([
+		"inch",
+		"foot",
+		"centimeter",
+		"yard",
+		"meter"
+	]);
+
 	jQuery.extend( KhanUtil, {
 		person: function( i ) {
 			return people[i - 1][0];
@@ -292,6 +311,14 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 
 		pizza: function( i ) {
 			return pizzas[i];
+		},
+
+		bug: function( i ) {
+			return bugs[i];
+		},
+
+		length: function( i ) {
+			return lengths[i];
 		}
 
 	});
