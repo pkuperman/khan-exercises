@@ -30,6 +30,10 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 	// How far to jump through the problems
 	jumpNum,
 
+	// The current problem and its corresponding exercise
+	problem,
+	exercise,
+
 	// The number of the current problem that we're on
 	problemNum,
 	problemID,
@@ -347,7 +351,10 @@ Khan.loadScripts( scripts, function() {
 					sha1: typeof userExercise !== "undefined" ? userExercise.exercise_model.sha1 : exerciseName,
 					
 					// The seed that was used for generating the problem
-					seed: problemSeed
+					seed: problemSeed,
+
+					// The non-summative exercise that the current problem belongs to
+					non_summative: exercise.data( "name" )
 				};
 		
 			// Save the problem results to the server
@@ -529,17 +536,17 @@ Khan.loadScripts( scripts, function() {
 
 	function loadExercise() {
 		var self = jQuery( this );
-		var src = self.data( "src" );
+		var name = self.data( "name" );
 		var weight = self.data( "weight" );
 		var dummy = jQuery( "<div>" );
 
 		remoteCount++;
-		dummy.load( src + " .exercise", function( data, status, xhr ) {
+		dummy.load( urlBase + "exercises/" + name + ".html .exercise", function( data, status, xhr ) {
 			var match, newContents;
 
 			if ( !( /success|notmodified/ ).test( status ) ) {
 				// Maybe loading from a file:// URL?
-				Khan.error( "Error loading exercise from file " + src + ": " + xhr.status + " " + xhr.statusText );
+				Khan.error( "Error loading exercise from file " + name + ".html: " + xhr.status + " " + xhr.statusText );
 				return;
 			}
 
@@ -547,10 +554,10 @@ Khan.loadScripts( scripts, function() {
 			self.replaceWith( newContents );
 
 			// Maybe the exercise we just loaded loads some others
-			newContents.find( ".exercise[data-src]" ).each( loadExercise );
+			newContents.find( ".exercise[data-name]" ).each( loadExercise );
 
 			// Save the filename and weights
-			newContents.filter( ".exercise" ).data( "src", src );
+			newContents.filter( ".exercise" ).data( "name", name );
 			newContents.filter( ".exercise" ).data( "weight", weight );
 
 			// Extract data-require
@@ -581,14 +588,15 @@ Khan.loadScripts( scripts, function() {
 		});
 	};
 
-	var remoteExercises = jQuery( ".exercise[data-src]" );
+	jQuery(function() {
+		var remoteExercises = jQuery( ".exercise[data-name]" );
 
-	if ( remoteExercises.length ) {
-		remoteExercises.each( loadExercise );
-
-	} else {
-		loadModules();
-	}
+		if ( remoteExercises.length ) {
+			remoteExercises.each( loadExercise );
+		} else {
+			loadModules();
+		}
+	});
 
 	function loadModules() {
 		// Load module dependencies
@@ -765,8 +773,6 @@ function makeProblemBag( problems, n ) {
 }
 
 function makeProblem( id, seed ) {
-	var problem;
-	
 	// Allow passing in a random seed
 	if ( typeof seed !== "undefined" ) {
 		randomSeed = seed;
@@ -806,7 +812,7 @@ function makeProblem( id, seed ) {
 	problemID = id;
 
 	// Find which exercise this problem is from
-	var exercise = problem.parents( ".exercise" ).eq( 0 );
+	exercise = problem.parents( ".exercise" ).eq( 0 );
 
 	// Work with a clone to avoid modifying the original
 	problem = problem.clone();
@@ -1061,11 +1067,6 @@ function prepareSite() {
 			.show();
 	}
 
-	// Hide exercies summaries for now
-	// Will figure out something more elegant to do with them once the new
-	// framework is shipped and we can worry about rounding out the summaries
-	jQuery( ".summary" ).hide();
-
 	// Watch for a solution submission
 	jQuery("#check-answer-button").click( handleSubmit );
 	jQuery("#answerform").submit( handleSubmit );
@@ -1153,6 +1154,21 @@ function prepareSite() {
 
 	// Watch for when the "Get a Hint" button is clicked
 	jQuery("#hint").click(function() {
+
+		if (user) {
+			var hintApproved = window.localStorage[ "hintApproved:" + user ];
+			if (!(typeof hintApproved !== "undefined" && JSON.parse(hintApproved))) {
+				if (!(typeof userExercise !== "undefined" && userExercise.read_only)) {
+					if (confirm("One-time warning: Using a hint will erase your streak.\nAre you sure you want to continue?")) {
+						// Hint consequences approved
+						window.localStorage[ "hintApproved:" + user ] = true;
+					} else {
+						// User doesn't want to lose streak.
+						return;
+					}
+				}
+			}
+		}
 
 		// Get the first hint and render left in the parallel arrays
 		var hint = rawHints.shift(),
@@ -1254,6 +1270,9 @@ function prepareSite() {
 			}
 
 			button.data( "show", !show );
+			if (user) {
+				window.localStorage[ "scratchpad:" + user ] = show;
+			}
 			
 			return false
 		});
@@ -1385,6 +1404,51 @@ function prepareSite() {
 	// Prepare for the debug info if requested
 	if ( testMode && Khan.query.debug != null ) {
 		jQuery( '<div id="debug"></div>' ).appendTo( "#answer_area" );
+	}
+
+	// Register API ajax callbacks for updating UI
+	if ( typeof APIActionResults !== "undefined" ) {
+		// Update exercise message after appropriate API ajax requests
+		APIActionResults.register("exercise_message_html", 
+			function(sExerciseMessageHtml) {
+				var jel = jQuery("#exercise-message-container");
+				var jelNew = jQuery(sExerciseMessageHtml);
+				if (jelNew.children().length) {
+					jel.empty().append(jelNew.children());
+					setTimeout(function(){ jel.slideDown(); }, 50);
+				}
+				else {
+					jel.slideUp();
+				}
+			}
+		);
+
+		// Update exercise icons after appropriate API ajax requests
+		APIActionResults.register("exercise_states", 
+			function(dictExerciseStates) {
+				var sPrefix = dictExerciseStates.summative ? "node-challenge" : "node";
+				var src = "";
+
+				if (dictExerciseStates.review)
+					src = "/images/node-review.png";
+				else if (dictExerciseStates.suggested)
+					src = "/images/" + sPrefix + "-suggested.png";
+				else if (dictExerciseStates.proficient)
+					src = "/images/" + sPrefix + "-complete.png";
+				else
+					src = "/images/" + sPrefix + "-not-started.png";
+
+				jQuery("#exercise-icon-container img").attr("src", src);
+			}
+		);
+	}
+
+	// Make scratchpad selection persistent
+	if (user) {
+		var lastScratchpad = window.localStorage[ "scratchpad:" + user ];
+		if (typeof lastScratchpad !== "undefined" && JSON.parse(lastScratchpad)) {
+			$("#scratch_pad_show").click();
+		}
 	}
 }
 
