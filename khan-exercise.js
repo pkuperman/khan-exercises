@@ -4,8 +4,36 @@ var Khan = (function() {
 var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 	47, 53, 59, 61, 67, 71, 73, 79, 83],
 	
+	/*
+	===============================================================================
+	Crc32 is a JavaScript function for computing the CRC32 of a string
+	...............................................................................
+
+	Version: 1.2 - 2006/11 - http://noteslog.com/category/javascript/
+
+	-------------------------------------------------------------------------------
+	Copyright (c) 2006 Andrea Ercolino
+	http://www.opensource.org/licenses/mit-license.php
+	===============================================================================
+	*/
+
 	// CRC32 Lookup Table
 	table = "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 136C9856 646BA8C0 FD62F97A 8A65C9EC 14015C4F 63066CD9 FA0F3D63 8D080DF5 3B6E20C8 4C69105E D56041E4 A2677172 3C03E4D1 4B04D447 D20D85FD A50AB56B 35B5A8FA 42B2986C DBBBC9D6 ACBCF940 32D86CE3 45DF5C75 DCD60DCF ABD13D59 26D930AC 51DE003A C8D75180 BFD06116 21B4F4B5 56B3C423 CFBA9599 B8BDA50F 2802B89E 5F058808 C60CD9B2 B10BE924 2F6F7C87 58684C11 C1611DAB B6662D3D 76DC4190 01DB7106 98D220BC EFD5102A 71B18589 06B6B51F 9FBFE4A5 E8B8D433 7807C9A2 0F00F934 9609A88E E10E9818 7F6A0DBB 086D3D2D 91646C97 E6635C01 6B6B51F4 1C6C6162 856530D8 F262004E 6C0695ED 1B01A57B 8208F4C1 F50FC457 65B0D9C6 12B7E950 8BBEB8EA FCB9887C 62DD1DDF 15DA2D49 8CD37CF3 FBD44C65 4DB26158 3AB551CE A3BC0074 D4BB30E2 4ADFA541 3DD895D7 A4D1C46D D3D6F4FB 4369E96A 346ED9FC AD678846 DA60B8D0 44042D73 33031DE5 AA0A4C5F DD0D7CC9 5005713C 270241AA BE0B1010 C90C2086 5768B525 206F85B3 B966D409 CE61E49F 5EDEF90E 29D9C998 B0D09822 C7D7A8B4 59B33D17 2EB40D81 B7BD5C3B C0BA6CAD EDB88320 9ABFB3B6 03B6E20C 74B1D29A EAD54739 9DD277AF 04DB2615 73DC1683 E3630B12 94643B84 0D6D6A3E 7A6A5AA8 E40ECF0B 9309FF9D 0A00AE27 7D079EB1 F00F9344 8708A3D2 1E01F268 6906C2FE F762575D 806567CB 196C3671 6E6B06E7 FED41B76 89D32BE0 10DA7A5A 67DD4ACC F9B9DF6F 8EBEEFF9 17B7BE43 60B08ED5 D6D6A3E8 A1D1937E 38D8C2C4 4FDFF252 D1BB67F1 A6BC5767 3FB506DD 48B2364B D80D2BDA AF0A1B4C 36034AF6 41047A60 DF60EFC3 A867DF55 316E8EEF 4669BE79 CB61B38C BC66831A 256FD2A0 5268E236 CC0C7795 BB0B4703 220216B9 5505262F C5BA3BBE B2BD0B28 2BB45A92 5CB36A04 C2D7FFA7 B5D0CF31 2CD99E8B 5BDEAE1D 9B64C2B0 EC63F226 756AA39C 026D930A 9C0906A9 EB0E363F 72076785 05005713 95BF4A82 E2B87A14 7BB12BAE 0CB61B38 92D28E9B E5D5BE0D 7CDCEFB7 0BDBDF21 86D3D2D4 F1D4E242 68DDB3F8 1FDA836E 81BE16CD F6B9265B 6FB077E1 18B74777 88085AE6 FF0F6A70 66063BCA 11010B5C 8F659EFF F862AE69 616BFFD3 166CCF45 A00AE278 D70DD2EE 4E048354 3903B3C2 A7672661 D06016F7 4969474D 3E6E77DB AED16A4A D9D65ADC 40DF0B66 37D83BF0 A9BCAE53 DEBB9EC5 47B2CF7F 30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D",
+
+	/* Number */
+	crc32 = function( /* String */ str, /* Number */ crc ) {
+		if( crc == window.undefined ) crc = 0;
+		var n = 0; //a number between 0 and 255
+		var x = 0; //an hex number
+
+		crc = crc ^ (-1);
+		for( var i = 0, iTop = str.length; i < iTop; i++ ) {
+			n = ( crc ^ str.charCodeAt( i ) ) & 0xFF;
+			x = "0x" + table.substr( n * 9, 8 );
+			crc = ( crc >>> 8 ) ^ x;
+		}
+		return Math.abs( crc ^ (-1) );
+	},
 
 	// Check to see if we're in test mode
 	testMode = window.location.host.indexOf("localhost") === 0 || window.location.protocol === "file:",
@@ -26,6 +54,7 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 
 	// Get the username of the user
 	user = window.localStorage["exercise:lastUser"] || null,
+	userCRC32,
 
 	// How far to jump through the problems
 	jumpNum,
@@ -291,8 +320,8 @@ var Khan = {
 // Load query string params
 Khan.query = Khan.queryString();
 
-// Seed the random number generator
-randomSeed = testMode && parseFloat( Khan.query.seed ) || ( new Date().getTime() & 0xffffffff );
+// Seed the random number generator with the user's hash
+randomSeed = testMode && parseFloat( Khan.query.seed ) || userCRC32 || ( new Date().getTime() & 0xffffffff );
 
 // Load in jQuery
 var scripts = (typeof jQuery !== "undefined") ? [] : [ { src: "https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" } ];
@@ -318,7 +347,9 @@ Khan.loadScripts( scripts, function() {
 			hintUsed = false;
 			attempts = 0;
 			lastAction = (new Date).getTime();
-			
+
+			jQuery("#hint").val("I'd like a hint");
+
 			if ( once ) {
 				updateData();
 				once = false;
@@ -359,9 +390,29 @@ Khan.loadScripts( scripts, function() {
 		
 			// Save the problem results to the server
 			request( "problems/" + (getData().total_done + 1) + "/attempt", data, function() {
+
 				// TODO: Save locally if offline
 				jQuery(Khan).trigger( "answerSaved" );
-			});
+
+				jQuery( "#throbber" ).hide();
+				jQuery( "#check-answer-button" ).removeClass( "buttonDisabled" );
+				if ( pass ) {
+					jQuery( "#check-answer-button" ).hide();
+					if ( !testMode || Khan.query.test == null ) {
+						jQuery( "#next-container" ).show();
+						jQuery( "#next-question-button" ).removeAttr( "disabled" )
+							.removeClass( "buttonDisabled" )
+							.focus();
+					}
+				} else {
+					jQuery( "#answerform input" ).removeAttr( "disabled" );
+				}
+			}, function() {
+				// Error during submit. Cheat, for now, and reload the page in
+				// an attempt to get updated data.
+				window.location.reload();
+			}
+			);
 			
 			// Make sure hint streak breaking is handled correctly
 			doSave = false;
@@ -427,17 +478,26 @@ Khan.loadScripts( scripts, function() {
 		
 		if ( user != null ) {
 			// How far to jump through the problems
-			jumpNum = primes[ crc32( user ) % primes.length ];
+			jumpNum = primes[ userCRC32 % primes.length ];
 
 			// The starting problem of the user
-			problemNum = crc32( user ) % bins;
+			problemNum = userCRC32 % bins;
 
 			// Advance to the current problem seed
 			nextProblem( getData().total_done );
 		}
 	};
 	
-	function request( method, data, fn ) {
+	function request( method, data, fn, fnError ) {
+		if ( testMode ) {
+			// Pretend we have success
+			if ( jQuery.isFunction( fn ) ) {
+				fn();
+			}
+
+			return;
+		}
+
 		jQuery.ajax({
 			// Do a request to the server API
 			url: server + "/api/v1/user/exercises/" + exerciseName + "/" + method,
@@ -459,7 +519,7 @@ Khan.loadScripts( scripts, function() {
 			},
 			
 			// Handle error edge case
-			error: fn
+			error: fnError
 		});
 	}
 	
@@ -469,8 +529,12 @@ Khan.loadScripts( scripts, function() {
 		data = data || getData();
 
 		// Change users, if needed
-		user = data.user;
-		
+		if ( user !== data.user ) {
+			user = data.user;
+			userCRC32 = user != null ? crc32( user ) : null;
+			randomSeed = userCRC32 || randomSeed;
+		}
+
 		// Cache the data locally
 		if ( data && user != null ) {
 			window.localStorage[ "exercise:" + user + ":" + exerciseName ] = JSON.stringify( data );
@@ -502,34 +566,6 @@ Khan.loadScripts( scripts, function() {
 				next_points: 225
 			};
 		}
-	}
-	
-	/*   
-	=============================================================================== 
-	Crc32 is a JavaScript function for computing the CRC32 of a string 
-	............................................................................... 
-
-	Version: 1.2 - 2006/11 - http://noteslog.com/category/javascript/ 
-
-	------------------------------------------------------------------------------- 
-	Copyright (c) 2006 Andrea Ercolino 
-	http://www.opensource.org/licenses/mit-license.php 
-	=============================================================================== 
-	*/
-	
-	/* Number */ 
-	function crc32( /* String */ str, /* Number */ crc ) { 
-		if( crc == window.undefined ) crc = 0; 
-		var n = 0; //a number between 0 and 255 
-		var x = 0; //an hex number 
-
-		crc = crc ^ (-1); 
-		for( var i = 0, iTop = str.length; i < iTop; i++ ) { 
-			n = ( crc ^ str.charCodeAt( i ) ) & 0xFF; 
-			x = "0x" + table.substr( n * 9, 8 ); 
-			crc = ( crc >>> 8 ) ^ x; 
-		} 
-		return Math.abs( crc ^ (-1) ); 
 	}
 
 	var remoteCount = 0;
@@ -900,7 +936,7 @@ function makeProblem( id, seed ) {
 	// A working solution was not generated
 	if ( !validator ) {
 		// Making the problem failed, let's try again
-		makeProblem( id, seed );
+		makeProblem( id, randomSeed );
 		return;
 	}
 
@@ -909,7 +945,8 @@ function makeProblem( id, seed ) {
 	choices.remove();
 
 	// Add the problem into the page
-	jQuery( "#workarea" ).append( problem );
+	jQuery( "#workarea" ).append( problem ).fadeIn();
+	jQuery( "#answerform input" ).removeAttr("disabled");
 
 	// Save the raw hints so they can be modified later
 	rawHints = hints.clone()
@@ -1067,6 +1104,11 @@ function prepareSite() {
 			.show();
 	}
 
+	if (jQuery.browser.msie && parseInt(jQuery.browser.version) < 8) {
+		jQuery( "#answer_area, #problemarea, #extras" ).hide();
+		jQuery( "#browserwarning ").show();
+	}
+
 	// Watch for a solution submission
 	jQuery("#check-answer-button").click( handleSubmit );
 	jQuery("#answerform").submit( handleSubmit );
@@ -1079,19 +1121,15 @@ function prepareSite() {
 			return false;
 		}
 
+		jQuery( "#throbber" ).show();
+		jQuery( "#check-answer-button" ).addClass( "buttonDisabled" );
+		jQuery( "#answerform input" ).attr( "disabled", "disabled" );
 		// Figure out if the response was correct
 		if ( pass ) {
 			// Show a congratulations message
 			jQuery("#oops").hide();
 			jQuery("#congrats").show();
 
-			// Toggle the navigation buttons
-			jQuery("#check-answer-button").hide();
-			
-			if ( !testMode || Khan.query.test == null ) {
-				jQuery("#next-container").show().find("input").focus();
-			}
-			
 			jQuery("#happy").show();
 			jQuery("#sad").hide();
 
@@ -1120,6 +1158,7 @@ function prepareSite() {
 		jQuery("#next-question-button").blur().parent().hide();
 
 		// Wipe out any previous problem
+		jQuery("#workarea").hide();
 		jQuery("#workarea, #hintsarea, #hintsbag").empty();
 		jQuery("#hint").attr( "disabled", false );
 		
@@ -1178,6 +1217,8 @@ function prepareSite() {
 
 		if ( hint ) {
 
+			jQuery("#hint").val("Next step");
+
 			var problem = $hint.parent();
 
 			// If the hint has hint templating, then turn that hint templating into
@@ -1215,6 +1256,45 @@ function prepareSite() {
 		
 		jQuery(Khan).trigger( "showHint" );
 	});
+
+	jQuery( "#report-beta-issue-success" ).hide();
+	jQuery( "#report-beta-issue-fail" ).hide();
+
+	// if we're on the beta server. probably shouldn't be hard-coded...
+	if ( document.URL.indexOf( "http://khan-masterslave" ) === 0 ) {
+		$( "#report-beta-issue" ).css( "display", "block" );
+	
+		jQuery( "#report-beta-issue" ).click( function() {
+
+			var title = prompt( "Issue title" );
+
+			// Don't do anything on clicking Cancel
+			if ( title == null ) return;
+
+			title = encodeURI( title );
+			var body = encodeURI( prompt( "Provide a brief description of the issue" ) );
+
+			jQuery.ajax({
+				url: "http://66.220.0.98:2563/file_exercise_tester_bug?title=" + title + "&body=" + body,
+				dataType: "jsonp",
+				success: function( json ) {
+					if ( json.meta.status === 201 ) {
+						jQuery( "#report-beta-issue-fail" ).hide();
+						jQuery( "#report-beta-issue-success" ).show();
+						jQuery( "#report-beta-issue-title" ).html( json.data.title );
+						jQuery( "#report-beta-issue-link" ).html( "<a href=" + json.data.html_url + ">here</a>" );
+					} else {
+						jQuery( "#report-beta-issue-success" ).hide();
+						jQuery( "#report-beta-issue-fail" ).show();
+					}
+				},
+				error: function( json ) {
+					jQuery( "#report-beta-issue-success" ).hide();
+					jQuery( "#report-beta-issue-fail" ).show();
+				}
+			});
+		});
+	}
 
 	jQuery( "#print_ten" ).data( "show", true )
 		.click( function( e ) {

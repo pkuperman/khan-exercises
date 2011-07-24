@@ -32,7 +32,7 @@
 </div>
 <div id="extras" class="single-exercise">
     <div id="back-to-dashboard-link" class="single-exercise">
-        <a href="http://www.khanacademy.org/exercisedashboard" title="Back to Dashboard">&laquo; Back to Dashboard</a>
+        <a href="/exercisedashboard" title="Back to Dashboard">&laquo; Back to Dashboard</a>
     </div>
     <!-- TODO: Toggle scratch pad display -->
         <a id="scratch_pad_show" href="">Show scratch pad</a> | <a id="print_ten" href="">Show next 10 problems</a>
@@ -50,15 +50,15 @@
                 <span class="info-box-header">Answer</span>
                 <div id="solution"></div>
                 <input type="button" class="button green" id="check-answer-button" tabindex="10" value="Check Answer"/>
+				<img src="/images/throbber.gif" id="throbber" style="display:none;" name="throbber"/>
                 <input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px">
                 <span id="check-answer-results">
                     <span id="next-container" class="button" style="position:relative; display: none;">
                         <input id="next-question-button" type="button" class="button green" name="correctnextbutton" value="Correct! Next Question..."/>
-                        <img src="http://www.khanacademy.org/images/throbber.gif" id="throbber" style="display:none;" name="throbber"/>
                     </span><br/>
                     <img id="sad" style="display: none;"/>
                     <img id="happy" style="display: none;"/>
-                </span> <!-- TODO: 'One-time warning: Using a hint will erase your streak.\nAre you sure you want to continue?' -->
+                </span>
             </div>
             <div id="readonly" class="info-box">
                 <span id="readonly-problem" class="info-box-header"></span>
@@ -81,6 +81,21 @@
                 <input id="hint" type="button" class="button orange" value="I'd like a hint" name="hint"/>
             </div>
         </form>
+    </div>
+    <input type="button" class="button red" id="report-beta-issue" value="Report Issue" style="display:none;"/>
+		<p id="report-beta-issue-success">Thank you for your feedback! Your	issue, <span id="report-beta-issue-title"></span>, can be found <span id="report-beta-issue-link"></span>.</p>
+		<p id="report-beta-issue-fail">Communication with GitHub isn't working. Please file the issue manually at <a href="http://github.com/Khan/khan-exercises/issues/new">GitHub</a>.</p>
+    <div id='browserwarning'>
+        <p>
+            You need to upgrade your browser to use Khan Academy's practice exercises.
+        </p>
+        <p>
+            We suggest using
+            <a href="http://www.google.com/chrome/">Chrome</a>,
+            <a href="http://www.mozilla.com/">Firefox</a>,
+            <a href="http://www.apple.com/safari/">Safari</a>, or
+            <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home">a recent version of Internet Explorer</a>.
+        </p>
     </div>
 </div>
 <div style="clear: both;"></div>
