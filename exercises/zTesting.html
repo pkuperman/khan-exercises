@@ -1,44 +1,59 @@
 <!DOCTYPE html>
-<html data-require="math math-format expressions">
+<html data-require="math math-format word-problems">
 <head>
 	<title>Testing</title>
 	<script src="../khan-exercise.js"></script>
 </head>
+
+<!--
+
+-->
+
 <body>
 	<div class="exercise">
+		<div class="vars">
+			<var id="A">"Global"</var>
+		</div>
 
 		<div class="problems">
-			<div>
+			<div id="original">
 				<div class="vars">
-					<var id="PM">randRangeNonZero( -1, 1 )</var> <!-- ensures 50% of each type of problem -->
-					<var id="SIGN">( PM === 1 ? "+" : "-")</var>
-					<var id="WHOLE1">randRange( 2, 19 )</var>
-					<var id="WHOLE2">( PM === 1 ? randRange( 1, 19 ) : randRange( -WHOLE1 + 1, -1 ))</var>
-					<var id="D">randRange( 3, 20 )</var>
-
-					<div data-ensure="( PM === 1 ? ( N1 + N2 < D ) : ( N1 > N2 ))">
-						<var id="N1">randRange( 1, D - 1 )</var>
-						<var id="N2">randRange( 1, D - 2 )</var>
-					</div>
-					<var id="GCD">getGCD( (N1 + PM * N2) , D )</var>
+					<var id="A">"Problem 1"</var>
 				</div>
+				<p class="problem">Original Problem</p>
+				<p class="question">Original Q: <var>A</var></p>
+				<p class="solution"><var>1</var></p>
 
-				<p class="problem">Write the following as a mixed number. Simplify your answer to lowest terms.</p>
-				<p class="question"><code><var>expr(["color", "blue",["+", WHOLE1 + fraction( N1, D ), WHOLE2 + fraction( N2, D )]])</var> = ?</code><br><br>
-				<code><var>expr(["color", "blue",["+", WHOLE1, WHOLE2 ]])</var> = ?</code>
-				
-				</p>
-				<div class="solution" data-type="multiple">
-					<p><span class="sol" data-type="text"><var>WHOLE1 + WHOLE2</var></span> 
-					   <span class="sol" data-type="rational"><var>( N1 + PM * N2 ) / D</var></span></p>
-				</div>
-				<div class="hints">
-					<p><code><var>expr(["+", WHOLE1, fraction( N1, D ), WHOLE2, fraction( PM * N2, D )])</var></code> (separate the terms)</p>
-					<p><code><var>expr(["+", WHOLE1, WHOLE2, fraction( N1, D ), fraction( PM * N2, D )])</var></code> (put whole #s and fractions together)</p>
-					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 + PM * N2, D )])</var> = <var>WHOLE1 + WHOLE2 + fraction( N1 + PM * N2, D )</var></code> (Calculate each part, then combine)</p>
-					<p data-if="GCD > 1">Reducing to lowest terms, <code><var>WHOLE1 + WHOLE2</var><var>fractionReduce( ( N1 + PM * N2 ), D )</var></code>.</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">Original Hint</p>
 				</div>
 			</div>
+
+			<div data-type="original">
+				<div class="vars">
+					<var id="A">"Inherited"</var>
+				</div>
+				<p class="question">Inherited Q: <var>A</var></p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">Inherited Hint</p>
+				</div>
+			</div>
+
+			<div>
+				<div class="vars">
+					<var id="A">"Type 3"</var>
+				</div>
+				<p class="question">Type 3: <var>A</var></p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">Inherited Hint</p>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="hints">
+			<p id="hint1"></p>
+			<p>Simplify.</p>
 		</div>
 	</div>
 </body>

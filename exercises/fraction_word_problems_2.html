@@ -6,55 +6,143 @@
 </head>
 
 <!--
-(Name1) watched a (Bug1) on the sidewalk. It crawled (var1) of a yard, then rested for a bit, and then crawled (var2) of a yard farther. How far did the (Bug1) crawl in all?
+
+test vars and inheritance between global, local and overwriting to get the -ve or +ve Numerators
+
+Now working on problem type sandcastle, getting the minuses to work
+
+mixed #
+adding or subtracting
+
+take hints from + - mixed numbers
+
+Shantanu walked 3/4 on mile on Wednesday and 5/6 of a mile on Thursday.  How many total miles did Shantanu walk over the two days?
+
+Sal rode his bike 2 1/4 miles from his house to work and then 1 5/8 miles to lunch.  How many miles did Sal ride in total?
+
+Shantanu is 34 1/2 years old and Omar is 16 1/4 years old. What is their difference in age.  Write the answer as a simplified mixed number.
+
+Marcia planted a plant that grew 1 1/2 inches in the first year and 2 3/4 inches in the 2nd year.  How many inches did it grow over the two years?
+
+
+
+
+Another question: What is the difference in heights of the two sandcastles?
+
+(name1) weighed two pieces of metal for an experiment. The piece of (metal1) weighed (var1) of a (unit of measure1) and the piece of (metal2) weighed (var2) of a pound. How much more did the piece of (metal1) weigh than the piece of (metal2)?
+
 -->
+
 <body>
-<div class="exercise">
-
-	<div class="problems">
-		<div id="bug">
-			<div class="vars">
-				<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
-					<var id="D1">randRange( 3, 20 )</var>
-					<var id="D2">randRange( 3, 20 )</var>
-				</div>
-				<div data-ensure="(N1 / D1) + (N2 / D2) < 1">
-					<var id="N1">randRange( 1, D1 - 1 )</var>
-					<var id="N2">randRange( 1, D2 - 1 )</var>
-				</div>
-				<var id="LCM">getLCM( D1, D2 )</var>
-				<var id="F1">LCM / D1</var>
-				<var id="F2">LCM / D2</var>
-
+	<div class="exercise">
+		<div class="vars">
+			<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
+				<var id="D1">randRange( 3, 20 )</var>
+				<var id="D2">randRange( 3, 20 )</var>
 			</div>
 
-			<p class="problem">Write as a fraction. Simplify the answer:</p>
-			<p class="question"><var>person( 1 )</var> watched a <var>bug( 1 )</var> on the sidewalk. It crawled <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var>, then rested for a bit, and then crawled <code><var>fraction( N2, D2 )</var></code> of a <var>length( 1 )</var> farther. How far did the <var>bug( 1 )</var> crawl in all?</p>
-			<p class="solution" data-type="rational"><var>(N1 * LCM / D1 + N2 * LCM / D2) / LCM</var></p>
+			<var id="LCM">getLCM( D1, D2 )</var>
+			<var id="F1">LCM / D1</var>
+			<var id="F2">LCM / D2</var>
 
-			<div class="hints">
-				<p>The bug crawled a total distance of <code><var>fraction( N1, D1 )</var></code> + <code><var>fraction( N2, D2 )</var></code> <var>plural( length( 1 ))</var></p>
-				<p>First, we need to find a common denominator. The least common multiple of <code><var>D1</var></code> and <code><var>D2</var></code> is the smallest possible common denominator.</p>
-				<p>LCM( <code><var>D1</var></code>, <code><var>D2</var></code> ) <code>= <var>LCM</var></code></p>
-				<p>Now, we need to change both fractions to have a denominator of <code><var>LCM</var></code>.</p>
-				<p><code>\begin{align*}<var>fraction( N1, D1 )</var>\cdot <var>fraction( F1, F1 )</var> &= <var>fraction( N1 * F1, LCM )</var>\\
-				<var>fraction( N2, D2 )</var>\cdot <var>fraction( F2, F2 )</var> &= <var>fraction( N2 * F2, LCM )</var>\end{align*}</code></p>
-				<div>
-					<p>So, the problem becomes:</p>
-					<p><code><var>fraction( N1 * F1, LCM )</var> + <var>fraction( N2 * F2, LCM )</var> = ?</code></p>
+			<div data-ensure="(N1 / D1) + (N2 / D2) < 1">
+				<var id="N1">randRange( 1, D1 - 1 )</var>
+				<var id="N2">randRange( 1, D2 - 1 )</var>
+			</div>
+
+		</div>
+
+		<div class="problems">
+			<div id="original">
+				<p class="problem">Write as a fraction. Simplify the answer:</p>
+				<p class="question"><var>person( 1 )</var> watched a <var>bug( 1 )</var> on the sidewalk. It crawled <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var>, then rested for a bit, and then crawled <code><var>fraction( N2, D2 )</var></code> of a <var>length( 1 )</var> farther. How far did the <var>bug( 1 )</var> crawl in all?</p>
+				<p class="solution" data-type="rational"><var>(N1 * LCM / D1 + N2 * LCM / D2) / LCM</var></p>
+
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The bug crawled a total distance of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( length( 1 ))</var>.</p>
 				</div>
-				<div>
-					<p><var>N2 &gt; 0 ? "Add" : "Subtract"</var> the numerators.</p>
-					<p><code><var>fraction( F1 * N1 + F2 * N2, LCM)</var></code></p>
+			</div>
+
+			<div data-type="original">
+				<p class="question">On a hot day, <var>person( 1 )</var> poured <code><var>fraction( N1, D1 )</var></code> of a bucket of water into a plastic wading pool.  A while later, <var>he( 1 )</var> added another <code><var>fraction( N2, D2 )</var></code> of a bucket.  How much water did <var>person( 1 )</var> pour into the pool?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1"><var>person( 1 )</var> poured a total of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> buckets of water into the pool.</p>
 				</div>
-				<div data-if="getGCD( F1 * N1 + F2 * N2, LCM ) !== 1">
-					<p>Simplify.</p>
-					<p><code><var>fractionReduce( F1 * N1 + F2 * N2, LCM )</var></code></p>
+			</div>
+
+			<div data-type="original">
+				<p class="question"><var>person( 1 )</var> jogged <code><var>fraction( N1, D1 )</var></code> of a lap <var>activeTime( 1 )</var> and <code><var>fraction( N2, D2 )</var></code> of a lap <var>activeTime( 2 )</var>. How many laps did <var>person( 1 )</var> jog in all?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1"><var>person( 1 )</var> jogged a total of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> laps in all.</p>
 				</div>
+			</div>
+
+			<div id="minus" data-type="original">
+				<div class="vars">
+
+					<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
+						<var id="D1">randRange( 3, 20 )</var>
+						<var id="D2">randRange( 3, 20 )</var>
+					</div>
+
+					<div data-ensure="(N1 / D1) + (N2 / D2) > 0">
+						<var id="N1">randRange( 1, D1 - 1 )</var>
+						<var id="N2">randRange( -D2 + 1, -1 )</var>
+					</div>
+					<var id="LCM">getLCM( D1, D2 )</var>
+					<var id="F1">LCM / D1</var>
+					<var id="F2">LCM / D2</var>
+				</div>
+				<p class="question">At the beach, <var>person( 1 )</var> and <var>person( 2 )</var> both built sandcastles and then measured their heights. <var>person( 1 )</var>’s sandcastle was <code><var>fraction( N1, D1 )</var></code> of a meter tall and <var>person( 2 )</var>’s was <code><var>fraction( -N2, D2 )</var></code> of a meter tall. How much taller was <var>person( 1 )</var>'s sandcastle than her <var>person( 2 )</var>’s?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in height of the two sandcastles can be measured as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> meters.</p>
+				</div>
+			</div>
+
+			<div data-type="minus">
+				<p class="question">A tailor cut <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var> off a <var>clothing( 1 )</var> and <code><var>fraction( -N2, D2 )</var></code> of a <var>length( 1 )</var> off a <var>clothing( 2 )</var>. How much more did the tailor cut off the <var>clothing( 2 )</var> than the <var>clothing( 1 )</var>?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in how much the tailor cut can be expressed as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( length( 1 ))</var>.</p>
+				</div>
+			</div>
+<!-- 
+
+			<div data-type="minus">
+				<p class="question">A tailor cut <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var> off a <var>clothing( 1 )</var> and <code><var>fraction( -N2, D2 )</var></code> of a <var>length( 1 )</var> off a <var>clothing( 2 )</var>. How much more did the tailor cut off the <var>clothing( 2 )</var> than the <var>clothing( 1 )</var>?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in how much the tailor cut can be expressed as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( length( 1 ))</var>.</p>
+				</div>
+			</div>
+
+			<div data-type="minus">
+				<p class="question"><var>person( 1 )</var> weighed two pieces of metal for an experiment.The piece of <var>metal( 1 )</var> weighed <code><var>fraction( N1, D1 )</var></code> of a <var>weight( 1 )</var> and the piece of <var>metal( 2 )</var> weighed <code><var>fraction( -N2, D2 )</var></code>of a <var>weight( 1 )</var>. How much more did the piece of <var>metal( 1 )</var> weigh than the piece of <var>metal( 2 )</var>?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in the weight of the two pieces of<var>metal( 1 )</var> can be expressed as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code><var>plural( weight( 1 ))</var>.</p>
+				</div>
+			</div>
+-->
+		</div>
+
+		<div class="hints">
+			<p id="hint1"></p>
+			<p>First, we need to find a common denominator. The least common multiple of <code><var>D1</var></code> and <code><var>D2</var></code> is the smallest possible common denominator.</p>
+			<p>LCM( <code><var>D1</var></code>, <code><var>D2</var></code> ) <code>= <var>LCM</var></code></p>
+			<p>Now, we need to change both fractions to have a denominator of <code><var>LCM</var></code>.</p>
+			<p><code>\begin{align*}<var>fraction( N1, D1 )</var>\cdot <var>fraction( F1, F1 )</var> &= <var>fraction( N1 * F1, LCM )</var>\\
+			<var>fraction( N2, D2 )</var>\cdot <var>fraction( F2, F2 )</var> &= <var>fraction( N2 * F2, LCM )</var>\end{align*}</code></p>
+			<div>
+				<p>So, the problem becomes:</p>
+				<p><code><var>fraction( N1 * F1, LCM )</var> + <var>fraction( N2 * F2, LCM )</var> = ?</code></p>
+			</div>
+			<div>
+				<p><var>N2 &gt; 0 ? "Add" : "Subtract"</var> the numerators.</p>
+				<p><code><var>fraction( F1 * N1 + F2 * N2, LCM)</var></code></p>
+			</div>
+			<div data-if="getGCD( F1 * N1 + F2 * N2, LCM ) !== 1">
+				<p>Simplify.</p>
+				<p><code><var>fractionReduce( F1 * N1 + F2 * N2, LCM )</var></code></p>
 			</div>
 		</div>
 	</div>
-</div>
-
 </body>
 </html>

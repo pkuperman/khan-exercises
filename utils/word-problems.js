@@ -236,6 +236,41 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 		"meter"
 	]);
 
+	var activeTimes = KhanUtil.shuffle([
+		"in P.E. class",
+		"during team practice",
+		"in the morning",
+		"at lunchtime",
+		"in the afternoon"
+	]);
+
+	var clothes = KhanUtil.shuffle([
+		"pair of pants",
+		"shirt",
+		"blouse",
+		"jacket",
+		"tuxedo",
+		"dress"
+	]);
+
+	var metals = KhanUtil.shuffle([
+		"iron",
+		"gold",
+		"platinum",
+		"copper",
+		"silver",
+		"nickel",
+		"aluminum",
+		"zinc"
+	]);
+
+	var weights = KhanUtil.shuffle([
+		"gram",
+		"kilogram",
+		"ounce",
+		"pound"
+	]);
+
 	jQuery.extend( KhanUtil, {
 		person: function( i ) {
 			return people[i - 1][0];
@@ -319,6 +354,22 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 
 		length: function( i ) {
 			return lengths[i];
+		},
+
+		activeTime: function( i ) {
+			return activeTimes[i];
+		},
+
+		clothing: function( i ) {
+			return clothes[i];
+		},
+
+		metal: function( i ) {
+			return metals[i];
+		},
+
+		weight: function( i ) {
+			return weights[i];
 		}
 
 	});
