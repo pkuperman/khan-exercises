@@ -106,7 +106,20 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 		"issues": 0
 	},
 
-	urlBase = testMode ? "../" : "/khan-exercises/";
+	urlBase = testMode ? "../" : "/khan-exercises/",
+
+	issueError = "Communication with GitHub isn't working. Please file "
+		+ "the issue manually at <a href=\""
+		+ "http://github.com/Khan/khan-exercises/issues/new\">GitHub</a>.",
+	issueSuccess = function( a, b ) {
+		return "Thank you for your feedback! Your issue, <a href=\""
+			+ a + "\">" + b + "</a>, has been created."; 
+	},
+	issueIntro = "Please let us know if you notice any odd or wrong behavior "
+		+ "in any nook or cranny of the site. This includes all interacitons, "
+		+ "progress, knowledge map, badges, activities, reports, or anything "
+		+ "else that you think is acting a little funky. Thanks fro helping "
+		+ "us out!";
 
 // Add in the site stylesheets
 if (testMode) {
@@ -136,7 +149,7 @@ var Khan = {
 				messageStyle: \"none\",\
 				skipStartupTypeset: true,\
 				jax: [\"input/TeX\",\"output/HTML-CSS\"],\
-				extensions: [\"tex2jax.js\",\"MathMenu.js\",\"MathZoom.js\"],\
+				extensions: [\"tex2jax.js\",\"MathZoom.js\"],\
 				TeX: {\
 					extensions: [\"AMSmath.js\",\"AMSsymbols.js\",\"noErrors.js\",\"noUndefined.js\"],\
 					Macros: {\
@@ -145,7 +158,8 @@ var Khan = {
 					Augment: {\
 						Definitions: {\
 							macros: {\
-								lrsplit: \"LRSplit\"\
+								lrsplit: \"LRSplit\",\
+								lcm: [\"NamedOp\", 0],\
 							}\
 						},\
 						Parse: {\
@@ -166,6 +180,7 @@ var Khan = {
 				},\
 				\"HTML-CSS\": {\
 					scale: 100,\
+					showMathMenu: false,\
 					availableFonts: [\"TeX\"]\
 				}\
 			});\
@@ -548,6 +563,10 @@ function makeProblem( id, seed ) {
 	// Work with a clone to avoid modifying the original
 	problem = problem.clone();
 
+	// problem has to be child of visible #workarea for MathJax metrics to all work right
+	var workAreaWasVisible = jQuery( "#workarea" ).is( ":visible" );
+	jQuery( "#workarea" ).empty().append( problem ).show();
+
 	// If there's an original problem, add inherited elements
 	var parentType = problem.data( "type" );
 
@@ -637,7 +656,7 @@ function makeProblem( id, seed ) {
 	choices.remove();
 
 	// Add the problem into the page
-	jQuery( "#workarea" ).append( problem ).fadeIn();
+	jQuery( "#workarea" ).toggle( workAreaWasVisible ).fadeIn();
 	jQuery( "#answercontent input" ).removeAttr("disabled");
 
 	// save a normal JS array of hints so we can shift() through them later
@@ -906,7 +925,7 @@ function prepareSite() {
 
 		// Wipe out any previous problem
 		jQuery("#workarea").hide();
-		jQuery("#workarea, #hintsarea").empty();
+		jQuery("#workarea, #hintsarea").runModules( problem, "Cleanup" ).empty();
 		jQuery("#hint").attr( "disabled", false );
 
 		if ( Khan.scratchpad ) {
@@ -966,7 +985,8 @@ function prepareSite() {
 
 			var problem = jQuery( hint ).parent();
 
-			jQuery( hint ).runModules( problem ).appendTo( "#hintsarea" );
+			// Append first so MathJax can sense the surrounding CSS context properly
+			jQuery( hint ).appendTo( "#hintsarea" ).runModules( problem );
 
 			// Disable the get hint button
 			if ( hints.length === 0 ) {
@@ -990,67 +1010,73 @@ function prepareSite() {
 
 		}
 	});
+	
+	// Create form for issuing a bug on Github if the "Report a Problem" link
+	// is clicked. The reference to the link should probably be less hardcoded...
+	jQuery( ".footer-links a:first" ).click( function( e ) {
 
-	if ( betaMode ) {
-		jQuery( "#issue" ).show();
+		e.preventDefault();
 
-		jQuery( "#issue-report" ).click( function() {
+		if ( jQuery( "#issue" ).css( "display" ) === "none" ) {
+			jQuery( "#issue-status" ).removeClass( "error" ).html( issueIntro );
+			jQuery( "#issue" ).show( 500 );
+		} else if ( jQuery( "#issue form" ).css( "display" ) === "none" ) { 
+			jQuery( "#issue-status" ).removeClass( "error" ).html( issueIntro );
+			jQuery( "#issue form" ).show();
+		}
 
-			jQuery( "#issue-report" ).hide();
-			jQuery( "#issue-status" ).hide();
-			jQuery( "#issue-form" ).show( 500 );
+	});
 
-			jQuery( "#issue-submit" ).click( function() {
+	jQuery( "#issue form input[type=submit]" ).click( function( e ) {
+		
+		e.preventDefault();
 
-				if ( jQuery( "#issue-submit" ).css( "display" ) === "none" ) return;
+		// don't do anything if the user clicked a second time quickly
+		if ( jQuery( "#issue form" ).css( "display" ) === "none" ) return;
 
-				jQuery( "#issue-form" ).hide( 500 );
-				jQuery( "#issue-report" ).val( "Report Another Issue" ).show();
+		var title = jQuery( "#issue-title" ).val(),
+			email = jQuery( "#issue-email" ).val(),
+			path = Khan.query.exid + ".html"
+				+ "?seed=" + problemSeed
+				+ "&problem=" + problemID,
+			agent = navigator.userAgent,
+			body = ( email ? [ "Reporter: " + email ] : [] )
+				.concat( [ jQuery( "#issue-body" ).val(), path, agent ] )
+				.join( "\n\n" );
 
-				var title = jQuery( "#issue-title" ).val(),
-					user = jQuery( "#issue-username" ).val(),
-					path = Khan.query.exid
-						+ "?seed=" + problemSeed
-						+ "&problem=" + problemID,
-					agent = navigator.userAgent,
-					body = [ "Reporter: " + user,
-						jQuery( "#issue-body" ).val(), path, agent ].join("\n\n"),
-					error = "Communication with GitHub isn't working. Please file "
-						+ "the issue manually at <a href=\""
-						+ "http://github.com/Khan/khan-exercises/issues/new\">GitHub</a>.",
-					success = function( a, b ) {
-						return "Thank you for your feedback! Your issue, <a href=\""
-							+ a + "\">" + b + "</a> has been created.";
-					};
+		if ( title === "" ) {
+			jQuery( "#issue-status" ).addClass( "error" )
+				.html( "Please provide a valid title for the issue." ).show();
+			return;
+		}
 
-				if ( title === "" ) {
-					jQuery( "#issue-status" ).addClass( "error" )
-						.html( "Please provide a valid title for the issue." ).show();
-					return;
+		jQuery( "#issue form" ).hide();
+
+		jQuery.ajax({
+			url: "http://66.220.0.98:2563/file_exercise_tester_bug"
+				+ "?body=" + encodeURIComponent( body )
+				+ "&title=" + encodeURIComponent( title ),
+			dataType: "jsonp",
+			success: function( json ) {
+				console.log( json );
+				if ( json.meta.status === 201 ) {
+					jQuery( "#issue-status" ).removeClass( "error" )
+						.html( issueSuccess( json.data.html_url, json.data.title ) ).show();
+					jQuery( "#issue-title" ).val( "" );
+					jQuery( "#issue-body" ).val( "" );
+				} else {
+					jQuery( "#issue-status" ).addClass( "error" ).html( issueError ).show();
+					jQuery( "#issue form" ).show();
 				}
-
-				jQuery.ajax({
-					url: "http://66.220.0.98:2563/file_exercise_tester_bug"
-						+ "?body=" + encodeURIComponent( body )
-						+ "&title=" + encodeURIComponent( title ),
-					dataType: "jsonp",
-					success: function( json ) {
-						if ( json.meta.status === 201 ) {
-							jQuery( "#issue-status" ).removeClass( "error" )
-								.html( success( json.data.html_url, json.data.title ) ).show();
-							jQuery( "#issue-title" ).val( "" );
-							jQuery( "#issue-body" ).val( "" );
-						} else {
-							jQuery( "#issue-status" ).addClass( "error" ).html( error ).show();
-						}
-					},
-					error: function( json ) {
-						jQuery( "#issue-status" ).addClass( "error" ).html( error ).show();
-					}
-				});
-			});
+			},
+			// FIXME note that this doesn't actually work with jquery's default jsonp
+			error: function( json ) {
+				console.log( json );
+				jQuery( "#issue-status" ).addClass( "error" ).html( issueError ).show();
+				jQuery( "#issue form" ).show();
+			}
 		});
-	}
+	});
 
 	jQuery( "#print_ten" ).data( "show", true )
 		.click( function( e ) {
@@ -1082,7 +1108,7 @@ function prepareSite() {
 			link.data( "show", !show );
 		});
 
-	jQuery( "#scratch_pad_show" ).data( "show", true )
+	jQuery( "#scratchpad-show" ).data( "show", true )
 		.click( function() {
 			var button = jQuery( this ),
 				show = button.data( "show" );
@@ -1267,7 +1293,7 @@ function prepareSite() {
 	if (user) {
 		var lastScratchpad = window.localStorage[ "scratchpad:" + user ];
 		if (typeof lastScratchpad !== "undefined" && JSON.parse(lastScratchpad)) {
-			$("#scratch_pad_show").click();
+			$("#scratchpad-show").click();
 		}
 	}
 }
