@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html data-require="math math-format word-problems">
+<head>
+	<title>Fraction Word Problems 3</title>
+	<script src="../khan-exercise.js"></script>
+</head>
+
+<!--
+On (day1) night, (name1) ate a pizza for dinner and had (var1) of the pizza left over. On (day2), she ate (var2) of what was left. How much of the pizza did (name1) eat on (day2)?
+
+(var1) of the cakes at (name1)’s Bakery have chocolate frosting. (var2) of the cakes with chocolate frosting have raspberry filling. What fraction of the cakes at (name1)’s Bakery have both chocolate frosting and raspberry filling?
+
+(name1) owns (var1) acres of farmland. She grows (veg1) on (var2) of the land. On how many acres of land does (name1) grow (veg1)?
+
+(name1) had (var1) pounds of (fruit1). Dina let her friend (name2) eat (var2) of the (fruit1). How many pounds of (fruit1) did (name2) eat?
+
+-->
+<body>
+<div class="exercise">
+	<div class="vars">
+		<var id="D1">randRange(3, 12)</var>
+		<var id="D2">randRange(3, 12)</var>
+
+		<var id="N1">randRange(1, D1 - 1)</var>
+		<var id="N2">randRange(1, D2 - 1)</var>
+	</div>
+
+	<div class="problems">
+		<div id="original">
+			<p class="problem"><p>Simplify the answer.</p>
+			<p class="question">On <var>day( 1 )</var> night, <var>person( 1 )</var> ate a <var>dinnermeal( 1 )</var> for dinner and had <code><var>fraction( N1, D1 )</var></code> left over. 
+			   On <var>day( 2 )</var>, <var>he( 1 )</var> ate <code><var>fraction( N2, D2 )</var></code> of what was left. How much of the <var>dinnermeal( 1 )</var> did <var>person( 1 )</var> eat on <var>day( 2 )</var>?</p>
+			<div class="solution" data-type="rational"><var>( N1 * N2 ) / ( D1 * D2 )</var></div>
+			<div class="hints" data-apply="appendContents">
+				<p id="hint1">The amount eaten on <var>day( 2 )</var> is equal to <code><var>fraction( N1, D1 )</var> * <var>fraction( N2, D2 )</var></code> of a <var>dinnermeal( 1 )</var>.</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="hints">
+		<p id="hint1"></p>
+		<p><code>\displaystyle {} = \frac{<var>N1</var> \times <var>N2</var>}{<var>D1</var> \times <var>D2</var>}</code></p>
+		<p><code>\displaystyle {} = \frac{<var>N1 * N2</var>}{<var>D1 * D2</var>}</code></p>
+		<p data-if="getGCD( N1 * N2, D1 * D2 ) !== 1"><code>\displaystyle {} = <var>fractionReduce( N1 * N2, D1 * D2 )</var></code></p>
+	</div>
+</div>
+</body>
+</html>
