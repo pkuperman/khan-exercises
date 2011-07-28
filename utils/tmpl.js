@@ -306,7 +306,8 @@ jQuery.fn.tmpl = function() {
 				}
 
 				// Do a deep clone (including event handlers and data) of the element
-				var clone = jQuery( elem ).clone( true )[0];
+				var clone = jQuery( elem ).clone( true )
+					.removeAttr( "data-each" ).removeData( "each" )[0];
 
 				// Insert in the proper place (depends on whether the loops is the last of its siblings)
 				if ( origNext ) {
@@ -362,7 +363,13 @@ jQuery.fn.tmpl = function() {
 
 		// Look through each of the attr processors, see if our element has the matching attribute
 		for ( var attr in jQuery.tmpl.attr ) {
-			var value = $elem.attr( attr );
+			var value;
+
+			if ( ( /^data-/ ).test( attr ) ) {
+				value = $elem.data( attr.replace( /^data-/, "" ) );
+			} else {
+				value = $elem.attr( attr );
+			}
 
 			if ( value !== undefined ) {
 				ret = jQuery.tmpl.attr[ attr ]( elem, value );

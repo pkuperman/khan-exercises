@@ -18,6 +18,15 @@ jQuery.extend(KhanUtil, {
 		return [ n, d ];
 	},
 
+	toFractionTex: function( n, dfrac ) {
+		var f = KhanUtil.toFraction( n );
+		if ( f[1] === 1 ) {
+			return f[0];
+		} else {
+			return "\\" + ( dfrac ? "d" : "" ) + "frac{" + f[0] + "}{" + f[1] + "}";
+		}
+	},
+
 	/* Format the latex of the fraction `n`/`d`.
 	 * - Will use latex's `dfrac` unless `small` is specified as truthy.
 	 * - Will wrap the fraction in parentheses if necessary (ie, unless the
@@ -285,8 +294,8 @@ jQuery.extend(KhanUtil, {
 				r = s.indexOf( "}", s.indexOf( "}" ) + 1 );
 
 				// if we've encountered \color{blue}{1}\color{xy} somehow
-				if ( l !== s.lastIndexOf( "{" ) && +KhanUtil._plusTrim( s.slice( l, r ) ) === 1 ) {
-					return s.slice( r + 1);
+				if ( l !== s.lastIndexOf( "{" ) + 1 && +KhanUtil._plusTrim( s.slice( l, r ) ) === 1 ) {
+					return s.slice( r + 1 );
 				}
 
 				return s.slice( 0, l ) + KhanUtil._plusTrim( s.slice( l, r ) ) + s.slice( r );

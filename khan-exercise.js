@@ -36,7 +36,10 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 	},
 
 	// Check to see if we're in test mode
-	testMode = (window.location.host.indexOf("localhost") === 0 || window.location.protocol === "file:") && /\.html$/.test( window.location.pathname ),
+	testMode = (window.location.host.indexOf("localhost") === 0 ||
+				window.location.host.indexOf("127.0.0.1") === 0 ||
+				window.location.protocol === "file:") &&
+				/\.html$/.test( window.location.pathname ),
 
 	// Check to see if we're in beta mode
 	betaMode = window.location.host.indexOf( "khan-masterslave" ) !== -1,
@@ -112,13 +115,13 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43,
 		+ "the issue manually at <a href=\""
 		+ "http://github.com/Khan/khan-exercises/issues/new\">GitHub</a>.",
 	issueSuccess = function( a, b ) {
-		return "Thank you for your feedback! Your issue, <a href=\""
-			+ a + "\">" + b + "</a>, has been created."; 
+		return "Thank you for your feedback! Your issue, <a id=\"issue-link\" "
+			+ "href=\"" + a + "\">" + b + "</a>, has been created."; 
 	},
 	issueIntro = "Please let us know if you notice any odd or wrong behavior "
-		+ "in any nook or cranny of the site. This includes all interacitons, "
+		+ "in any nook or cranny of the site. This includes all interactions, "
 		+ "progress, knowledge map, badges, activities, reports, or anything "
-		+ "else that you think is acting a little funky. Thanks fro helping "
+		+ "else that you think is acting a little funky. Thanks for helping "
 		+ "us out!";
 
 // Add in the site stylesheets
@@ -565,7 +568,7 @@ function makeProblem( id, seed ) {
 
 	// problem has to be child of visible #workarea for MathJax metrics to all work right
 	var workAreaWasVisible = jQuery( "#workarea" ).is( ":visible" );
-	jQuery( "#workarea" ).empty().append( problem ).show();
+	jQuery( "#workarea" ).append( problem ).show();
 
 	// If there's an original problem, add inherited elements
 	var parentType = problem.data( "type" );
@@ -647,6 +650,7 @@ function makeProblem( id, seed ) {
 	// A working solution was not generated
 	if ( !validator ) {
 		// Making the problem failed, let's try again
+		problem.remove();
 		makeProblem( id, randomSeed );
 		return;
 	}
@@ -806,6 +810,7 @@ function prepareSite() {
 
 	if (typeof userExercise !== "undefined" && userExercise.read_only) {
 		jQuery( "#answercontent" ).hide();
+		jQuery( "#extras" ).css("visibility", "hidden");
 
 		jQuery( "#readonly" )
 			.find( "#readonly-problem" ).text("Problem #" + (userExercise.total_done + 1)).end()
@@ -981,7 +986,7 @@ function prepareSite() {
 
 		if ( hint ) {
 
-			jQuery( "#hint" ).val("Next Step");
+			jQuery( "#hint" ).val("I'd like another hint");
 
 			var problem = jQuery( hint ).parent();
 
@@ -1017,16 +1022,29 @@ function prepareSite() {
 
 		e.preventDefault();
 
-		if ( jQuery( "#issue" ).css( "display" ) === "none" ) {
+		var entire = jQuery( "#issue" ).css( "display" ) === "none",
+			form = jQuery( "#issue form" ).css( "display" ) === "none";
+
+		if ( entire || form ) {
 			jQuery( "#issue-status" ).removeClass( "error" ).html( issueIntro );
-			jQuery( "#issue" ).show( 500 );
-		} else if ( jQuery( "#issue form" ).css( "display" ) === "none" ) { 
-			jQuery( "#issue-status" ).removeClass( "error" ).html( issueIntro );
-			jQuery( "#issue form" ).show();
+			jQuery( "#issue-title, #issue-email, #issue-body" ).val( "" );
+			jQuery( entire ? "#issue" : "#issue form" ).show();
 		}
 
 	});
 
+	
+	// Hide issue form.
+	jQuery( "#issue-cancel" ).click( function( e ) {
+		
+		e.preventDefault();
+
+		jQuery( "#issue" ).hide( 500 );
+		jQuery( "#issue-title, #issue-email, #issue-body" ).val( "" );
+
+	});
+
+	// Submit an issue.
 	jQuery( "#issue form input[type=submit]" ).click( function( e ) {
 		
 		e.preventDefault();
@@ -1058,12 +1076,10 @@ function prepareSite() {
 				+ "&title=" + encodeURIComponent( title ),
 			dataType: "jsonp",
 			success: function( json ) {
-				console.log( json );
 				if ( json.meta.status === 201 ) {
 					jQuery( "#issue-status" ).removeClass( "error" )
 						.html( issueSuccess( json.data.html_url, json.data.title ) ).show();
-					jQuery( "#issue-title" ).val( "" );
-					jQuery( "#issue-body" ).val( "" );
+					jQuery( "#issue-title, #issue-email, #issue-body" ).val( "" );
 				} else {
 					jQuery( "#issue-status" ).addClass( "error" ).html( issueError ).show();
 					jQuery( "#issue form" ).show();
@@ -1071,14 +1087,13 @@ function prepareSite() {
 			},
 			// FIXME note that this doesn't actually work with jquery's default jsonp
 			error: function( json ) {
-				console.log( json );
 				jQuery( "#issue-status" ).addClass( "error" ).html( issueError ).show();
 				jQuery( "#issue form" ).show();
 			}
 		});
 	});
 
-	jQuery( "#print_ten" ).data( "show", true )
+	jQuery( "#print-ten" ).data( "show", true )
 		.click( function( e ) {
 			e.preventDefault();
 
@@ -1087,17 +1102,17 @@ function prepareSite() {
 
 			if ( show ) {
 				link.text( "Try current problem" );
+				jQuery( "#hintsarea" ).empty();
+				jQuery( "#answerform" ).hide();
 
 				for ( var i = 0; i < 9; i++ ) {
 					jQuery( "#workarea" ).append( "<hr>" );
 					makeProblem();
 				}
-
 			} else {
 				link.text( "Show next 10 problems" );
-
-				jQuery( "#workarea, #hintsarea" ).empty();
-
+				jQuery( "#workarea" ).empty();
+				jQuery( "#answerform" ).show();
 				prevProblem( 10 );
 
 				makeProblem();
@@ -1117,10 +1132,9 @@ function prepareSite() {
 				if ( !Khan.scratchpad ) {
 					Khan.loadScripts( [ {src: urlBase + "utils/scratchpad.js"} ], function() {
 						jQuery( "#scratchpad" ).show();
+						jQuery( "#workarea, #hintsarea" ).css( "padding-left", 60 );
 
-						Khan.scratchpad = new Scratchpad();
-						Khan.scratchpad.offsetLeft = jQuery( "#scratchpad" ).offset().left;
-						Khan.scratchpad.offsetTop = jQuery( "#scratchpad" ).offset().top;
+						Khan.scratchpad = new Scratchpad( jQuery( "#scratchpad div" )[0] );
 						button.text( "Hide scratchpad" );
 					} );
 
