@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html data-require="math math-format graphie graphie-helpers">
 <head>
-	<title>Changing Fractions to Decimals</title>
+	<title>Changing Fractions to Percents</title>
 	<script src="../khan-exercise.js"></script>
 	
 	<script type="text/javascript">
@@ -32,14 +32,14 @@
 			<var id="DENOM">randFromArray([4, 5, 8, 10, 16, 20, 25, 40, 50, 100])</var>
 			<var id="DIVISOR">DENOM</var>
 			<var id="NUMER">randRange( 1, DIVISOR - 1 )</var>
-			<var id="DIVIDEND">NUMER * pow( 10, decimalLength( NUMER / DENOM ))</var>
+			<var id="DIVIDEND">NUMER * pow( 10, max( 2, decimalLength( NUMER / DENOM )))</var>
 			<var id="QUOTIENT">DIVIDEND / DIVISOR</var>
 			<var id="NUMER_DIGITS">integerToDigits( NUMER )</var>
 			<var id="DIVIDEND_DIGITS">integerToDigits( DIVIDEND )</var>
 			<var id="DIVISOR_DIGITS">integerToDigits( DIVISOR )</var>
 			<var id="HIGHLIGHTS">[]</var>
 			<var id="LEADING_ZEROS">[]</var>
-			<var id="ONLY_ZEROS">false</var>
+			<var id="ONLY_ZEROS">true</var>
 			<var id="REMAINDER">0</var>
 			<var id="DECIMALS">[]</var>
 		</div>
@@ -157,9 +157,9 @@
 					DECIMALS.pop().remove();
 				}
 				label( [ DIVIDEND_DIGITS.length + 2, 1 ],
-					"\\text{Shift the decimal 2 to the right and add a %.}", "right" );
+					"\\textbf{Shift the decimal 2 to the right and add a %.}", "right" );
 
-				HIGHLIGHTS = HIGHLIGHTS.concat( drawDigits( [ "%" ], decimalLength( NUMER / DENOM ) + 1.5, 1, "#6495ED" ) );
+				HIGHLIGHTS = HIGHLIGHTS.concat( drawDigits( [ "\\%" ], max( 2, decimalLength( NUMER / DENOM )) + 1.5, 1, "#000000" ) );
 				
 				style({
 					fill: "black"
