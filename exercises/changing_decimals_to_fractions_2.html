@@ -36,9 +36,9 @@ Convert fraction such as 0.3763 to a fraction,  convert fraction such as 12.16 i
 			<div id="into-mixed" data-weight="2">
 				<div class="vars">
 					<var id="W">randRange( 1, 19 )</var>
-					<var id="D">randRangeExclude(1, 99, [10,20,30,40,50,60,70,80,90]) / 100</var>
+					<var id="D">roundTo( 5, randRangeExclude(1, 99, [ 10 , 20 , 30 , 40 , 50 , 60 , 70 , 80 , 90 ]) / 100 )</var>
 				</div>
-				<p class="question">Express <var>W + D</var> as a mixed number. Reduce to lowest terms.</p>
+				<p class="question">Express <var>W + D</var> as a mixed number. Simplify your answer.</p>
 				<div class="solution" data-type="multiple">
 					<p><span class="sol" data-type="text"><var>W</var></span> 
 					   <span class="sol" data-type="rational"><var>D * 100 / 100</var></span></p>
