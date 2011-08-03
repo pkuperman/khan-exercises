@@ -1088,13 +1088,14 @@ function prepareSite() {
 
 	// Submit an issue.
 	jQuery( "#issue form input[type=submit]" ).click( function( e ) {
-		
+
 		e.preventDefault();
 
 		// don't do anything if the user clicked a second time quickly
 		if ( jQuery( "#issue form" ).css( "display" ) === "none" ) return;
 
-		var title = jQuery( "#issue-title" ).val(),
+		var pretitle = jQuery( "#exercise-title" ).html() || jQuery( "title" ).html(),
+			title = jQuery( "#issue-title" ).val(),
 			email = jQuery( "#issue-email" ).val(),
 			path = Khan.query.exid + ".html"
 				+ "?seed=" + problemSeed
@@ -1115,7 +1116,7 @@ function prepareSite() {
 		jQuery.ajax({
 			url: "http://66.220.0.98:2563/file_exercise_tester_bug"
 				+ "?body=" + encodeURIComponent( body )
-				+ "&title=" + encodeURIComponent( title ),
+				+ "&title=" + encodeURIComponent( [ pretitle, title ].join( " - " ) ),
 			dataType: "jsonp",
 			success: function( json ) {
 				if ( json.meta.status === 201 ) {
@@ -1231,7 +1232,7 @@ function prepareSite() {
 				path = fileName + "?problem=" + problemID
 					+ "&seed=" + problemSeed;
 
-			var title = encodeURIComponent( "Issue in " + $("title").html() ),
+			var title = encodeURIComponent( "Issue Found in Testing - " + $("title").html() ),
 				body = encodeURIComponent( [ description, path, prettyDump, navigator.userAgent ].join("\n\n") ),
 				label = encodeURIComponent( "tester bugs" );
 
