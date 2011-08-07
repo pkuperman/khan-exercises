@@ -10,31 +10,31 @@
 			<var id="WHOLE">randRange( 1, 5 )</var>
 			<var id="D">randRange( 2, 8 )</var>
 			<var id="N">randRange( 1, D - 1 )</var>
-
-			<var id="DIVIDEND_DIGITS">integerToDigits( WHOLE * D + N )</var>
-			<var id="DIVISOR_DIGITS">integerToDigits( D )</var>
-			<var id="LCM">getGCD( N, D )</var>
 		</div>
 
 		<div class="problems">
 
 			<div id="mixed-to-improper">
-				<p class="question">Write <code><var>WHOLE</var><var>fraction( N, D )</var></code> as an improper fraction.</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>( WHOLE * D + N ) / D</var></p> 
+				<p class="question">Write <code><var>WHOLE + fraction( N, D )</var></code> as an improper fraction.</p>
+				<p class="solution" data-type="improper" data-simplify="optional"><var>( WHOLE * D + N ) / D</var></p> 
 				<div class="hints">
-					<p><code><var>WHOLE</var><var>fraction( N, D )</var> = <var>WHOLE</var> + <var>fraction( N, D )</var></code></p>
-					<p><code><var>fraction( WHOLE + D, D )</var> + <var>fraction( N, D )</var> = <var>fraction(WHOLE * D + N, D)</var></code></p>
-					<p>The answer is <code><var>fraction( WHOLE * D + N, D )</var></code>.</p>
+					<p><code>= <var>WHOLE</var> + <var>fraction( N, D )</var></code></p>
+					<p><code>= <var>fraction( WHOLE * D, D )</var> + <var>fraction( N, D )</var></code></p>
+					<p><code>= <var>fraction(WHOLE * D + N, D)</var></code></p>
+					<p>The answer is <code><var>fraction( WHOLE * D + N, D )</var></code></p>
 				</div>
 			</div>
 
 
 			<div id="improper-to-mixed">
-				<p class="question">Write <code><var>fraction( WHOLE * D + N, D )</var></code> as a mixed number. Simplify your answer to lowest terms.</p>
-				<div class="solution" data-type="multiple">
-					<p><span class="sol" data-type="text"><var>WHOLE</var></span> 
-					   <span class="sol" data-type="rational"><var>N / D</var></span></p>
+				<div class="vars">
+					<var id="DIVIDEND_DIGITS">integerToDigits( WHOLE * D + N )</var>
+					<var id="DIVISOR_DIGITS">integerToDigits( D )</var>
+					<var id="GCD">getGCD( N, D )</var>
 				</div>
+
+				<p class="question">Write <code><var>fraction( WHOLE * D + N, D )</var></code> as a mixed number. Reduce to lowest terms.</p>
+				<p class="solution" data-type="mixed" data-simplify="optional"><var>WHOLE + N / D</var></p>
 				<div class="hints">
 					<div>
 						<div class="graphie" id="numbers">
@@ -52,9 +52,9 @@
 						</div>
 						<p>How many times does <var>D</var> go into <var>( WHOLE * D + N )</var>?</p>
 					</div>
-					<p><var>WHOLE</var> times with a remainder of <var>N</var>.</p>
-					<p>This gives <code><var>WHOLE</var><var>fraction( N, D )</var></code>.</p>
-					<p data-if="LCM > 1">Reducing to lowest terms, <code><var>WHOLE</var><var>fraction( N / LCM, D / LCM )</var></code>.</p>
+					<p><var>WHOLE</var> <var>( WHOLE === 1 ? "time" : "times" )</var> with a remainder of <var>N</var></p>
+					<p>This gives: <code><var>WHOLE</var><var>fraction( N, D )</var></code></p>
+					<p data-if="GCD > 1">Reducing to lowest terms: <code><var>WHOLE</var><var>fractionReduce( N, D )</var></code></p>
 				</div>
 			</div>
 
