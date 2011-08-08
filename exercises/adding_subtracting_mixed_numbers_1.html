@@ -40,10 +40,7 @@ NEED TO ADD 2-4 #s, NOT JUST 2
 
 				<p class="problem">Write the following as a mixed number. Simplify your answer to lowest terms.</p>
 				<p class="question"><code><var>expr(["+", WHOLE1 + fraction( N1, D1 ), WHOLE2 + fraction( N2, D2 )])</var> = ?</code></p>
-				<div class="solution" data-type="multiple">
-					<p><span class="sol" data-type="text"><var>WHOLE1 + WHOLE2</var></span> 
-					   <span class="sol" data-type="rational"><var>( N1 * D2 + PM * N2 * D1 ) / ( D1 * D2 )</var></span></p>
-				</div>
+				<div class="solution" data-type="mixed"><var>WHOLE1 + WHOLE2 + N1 / D1 + PM * N2 / D2</var></div>
 
 				<div class="hints">
 					<p><code><var>expr(["+", WHOLE1, fraction( N1, D1 ), WHOLE2, fraction( PM * N2, D2 )])</var></code> (separate the terms)</p>
