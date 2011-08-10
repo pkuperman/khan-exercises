@@ -71,53 +71,6 @@ function rectchart( divisions, colors, radius ) {
 	return set;
 }
 
-//set up our object for dragging
-function dragStart() {
-	if ( !this.pro.draggable() ) return;
-	var i;
-	//store the starting point for each item in the set
-	for ( i=0; i < this.pro.set.items.length; i++ ) {
-		var obj = this.pro.set.items[i];
-		
-		obj.ox = 0;
-		obj.oy = 0;
-
-		obj.animate( { opacity: .25 }, 500, ">" );
-	}
-}
-
-//clean up after dragging
-function dragStop() {
-	if ( !this.pro.draggable() ) return;
-	var i;
-	//remove the starting point for each of the objects
-	for ( i=0; i < this.pro.set.items.length; i++ ) {
-		var obj = this.pro.set.items[i];
-		
-		delete(obj.ox);
-		delete(obj.oy);
-
-		obj.animate( { opacity: .5 }, 500, ">" );
-	}
-}
-
-//take care of moving the objects when dragging
-function dragMove( dx, dy ) {
-	if ( !this.pro.draggable() ) return;
-	var i;
-	//reposition the objects relative to their start position
-	for ( i = 0; i < this.pro.set.items.length; i++ ) {
-		var obj = this.pro.set.items[i],
-		trans_x = dx - obj.ox,
-		trans_y = dy - obj.oy;
-		
-		obj.translate( trans_x, trans_y );
-		
-		obj.ox = dx;
-		obj.oy = dy;
-	}
-}
-
 function Rotator( center, r, pro ) {
 	var graph = KhanUtil.currentGraph;
 	this.set = graph.raphael.set();
@@ -152,6 +105,15 @@ function Rotator( center, r, pro ) {
 	this.set.push( this.upArrow );
 
 	jQuery([ this.downArrow.node, this.upArrow.node ]).css( "cursor", "hand" );
+	jQuery.each([ this.downArrow, this.upArrow ], function( i, el ) {
+		el.hover(
+			function( event ) {
+				this.attr({ fill: "green" });
+			},
+			function( event ) {
+				this.attr({ fill: "#aae" });
+			});
+	});
 
 	this.rotationOn = function() {
 		jQuery(this.upArrow.node).mousedown(function() {
@@ -180,6 +142,64 @@ function Rotator( center, r, pro ) {
 	return this;
 }
 
+function Translator( center, r, pro ) {
+	var graph = KhanUtil.currentGraph;
+	this.set = graph.raphael.set();
+
+	this.set.push( graph.line( [center[0]+1, center[1]-1], [center[0]+r-1, center[1]-1], { "stroke": "#aab", "stroke-width": 20 } ) );
+	
+	this.leftArrow = graph.path( [ [center[0]+1, center[1]-0.25],
+								   [center[0]+0.25, center[1]-1],
+								   [center[0]+1, center[1]-1.75]
+								 ],
+								{ "stroke-width": 0, "fill": "#aae" } );
+	this.set.push( this.leftArrow );
+
+	this.rightArrow = graph.path( [ [center[0]+r-1, center[1]-0.25],
+									[center[0]+r-1+0.75, center[1]-1],
+									[center[0]+r-1, center[1]-1.75]
+								  ],
+							  { "stroke-width": 0, "fill": "#aae" } );
+	this.set.push( this.rightArrow );
+
+	jQuery([ this.leftArrow.node, this.rightArrow.node ]).css( "cursor", "hand" );
+	jQuery.each([ this.leftArrow, this.rightArrow ], function( i, el ) {
+		el.hover(
+			function( event ) {
+				this.attr({ fill: "green" });
+			},
+			function( event ) {
+				this.attr({ fill: "#aae" });
+			});
+	});
+
+	this.translationOn = function() {
+		jQuery(this.leftArrow.node).mousedown(function() {
+			var iv = setInterval( function() { pro.rotatedTranslate( -5 ); }, 50 );
+			jQuery(document).one( "mouseup", function() {
+				clearInterval( iv );
+			});
+		});
+
+		jQuery(this.rightArrow.node).mousedown(function() {
+			var iv = setInterval( function() { pro.rotatedTranslate( 5 ); }, 50 );
+			jQuery(document).one( "mouseup", function() {
+				clearInterval( iv );
+			});
+		});
+
+		this.set.show();
+	};
+
+	this.translationOff = function() {
+		jQuery(this.leftArrow.node).unbind( "mousedown" ).unbind( "mouseup" );
+		jQuery(this.rightArrow.node).unbind( "mousedown" ).unbind( "mouseup" );
+
+		this.set.hide();
+	};
+	return this;
+}
+
 function Protractor( center, r ) {
 	var graph = KhanUtil.currentGraph;
 	this.set = graph.raphael.set();
@@ -190,14 +210,11 @@ function Protractor( center, r ) {
 
 	this.set.push( graph.arc( [this.cx, this.cy], r, 0, 180, { fill: "#b0c4de", stroke: lineColor } ) );
 
+	this.set.push( graph.circle( [this.cx, this.cy], 0.05 ) );
+	
+	this._rotation = 0;
 	this.getRotation = function() {
-		var t = this.set[0].transformations[0];
-		if ( t ) {
-			return parseFloat( t.substring( 7,
-											t.indexOf( " " ) ) );
-		} else {
-			return 0;
-		}
+		return this._rotation;
 	};
 
 	this.drawAngle = function( angle, rOffset, stroke, labelStroke ) {
@@ -221,15 +238,78 @@ function Protractor( center, r ) {
 	for ( var angle = 0; angle <= 180; angle += 10 ) {
 		this.drawAngle( angle );
 	}
-	this.set.drag( dragMove, dragStart, dragStop );
-	jQuery( jQuery.map( this.set, function( el ) { return el.node; } ) ).css( "cursor", "move" );
+
+	var pro = this;
+	var setNodes = jQuery.map( this.set, function( el ) { return el.node; } );
+	function makeTranslatable() {
+		// disable drag translation on IE, too slow
+		if ( !graph.raphael.raphael.vml ) {
+			jQuery( setNodes ).css( "cursor", "move" );
+			
+			jQuery( setNodes ).mousedown( function( event ) {
+				event.preventDefault();
+				
+				var i;
+				//store the starting point for each item in the set
+				for ( i=0; i < pro.set.items.length; i++ ) {
+					var obj = pro.set.items[i];
+					
+					obj.ox = event.pageX;
+					obj.oy = event.pageY;
+
+					obj.animate( { opacity: .25 }, 500, ">" );
+				}
+
+				jQuery(document).mousemove( function( event ) {
+					var i;
+					//reposition the objects relative to their start position
+					for ( i = 0; i < pro.set.items.length; i++ ) {
+						var obj = pro.set.items[i],
+						trans_x = event.pageX - obj.ox,
+						trans_y = event.pageY - obj.oy;
+						
+						obj.translate( trans_x, trans_y );
+						
+						obj.ox = event.pageX;
+						obj.oy = event.pageY;
+					}
+				});
+
+				jQuery(document).one( "mouseup", function( event ) {
+					var i;
+					//remove the starting point for each of the objects
+					for ( i=0; i < pro.set.items.length; i++ ) {
+						var obj = pro.set.items[i];
+						
+						delete(obj.ox);
+						delete(obj.oy);
+						
+						obj.animate( { opacity: .5 }, 500, ">" );
+						
+						jQuery(document).unbind("mousemove");
+					}
+				});
+			});
+		}
+
+		pro.translator.translationOn();
+	}
+
+	function makeUntranslatable() {
+		jQuery( setNodes ).unbind();
+		jQuery( setNodes ).css( "cursor", "auto" );
+
+		pro.translator.translationOff();
+	}
 	
 	this.rotator = new Rotator( [this.cx, this.cy], r, this );
 	this.set.push( this.rotator.set );
 
+	this.translator = new Translator( [this.cx, this.cy], r, this );
+	this.set.push( this.translator.set );
+
 	this.set.attr( { opacity: .5 } );
 
-	var pro = this;
 	jQuery.each( this.set, function( index, el ) {
 		// custom attribute so we can rotate the whole set from dragging any element
 		el.pro = pro;
@@ -250,6 +330,7 @@ function Protractor( center, r ) {
 		}
 
 		this.set.rotate( rotation + offset, c[0], c[1] );
+		this._rotation = rotation + offset;
 		return this;
 	};
 
@@ -260,7 +341,7 @@ function Protractor( center, r ) {
 			
 			var d = graph.scalePoint([ x, y ]),
 			c = this.getCenter();
-			
+
 			this.set.translate( d[0] - c[0], d[1] - c[1] );
 		} else {
 			this.cx += x;
@@ -271,16 +352,31 @@ function Protractor( center, r ) {
 		return this;
 	};
 
-	// Raphael doesn't let us unbind drag events
-	this.draggable = function( dble ) {
-		if ( typeof dble === "undefined" ) {
-			return this._draggable;
+	this.rotatedTranslate = function( k ) {
+		k = k || 1;
+		
+		var rot = Math.PI * this.getRotation() / 180;
+		
+		var x = k * Math.cos( rot ),
+		y = k * Math.sin( rot );
+
+		return this.translate( x, y );
+	};
+
+	this.translatable = function( tble ) {
+		if ( typeof tble === "undefined" ) {
+			return this._translatable;
 		} else {
-			this._draggable = dble;
+			this._translatable = tble;
+			if ( tble ) {
+				makeTranslatable();
+			} else {
+				makeUntranslatable();
+			}
 		}
 		return this;
 	};
-	this.draggable( true );
+	this.translatable( true );
 
 	this.rotatable = function( rble ) {
 		if ( typeof rble === "undefined" ) {
@@ -296,6 +392,8 @@ function Protractor( center, r ) {
 		return this;
 	};
 	this.rotatable( true );
+
+	this.set.translate( 0, 0 );
 
 	return this;
 }
@@ -338,3 +436,29 @@ function changeIntercept( dir ) {
 		+ ( dir * graph.BD / graph.INCR );
 	updateEquation();
 }
+
+(function(){
+	// Colorblind-safe set of colors from colorbrewer.org
+	var qualitativeColors = KhanUtil.shuffle([
+		"#33a02c", // dark green
+		"#b2df8a", // light green
+		"#6495ed", // cornflower blue
+		"#a6cee3"  // light blue
+	]);
+	
+	// You can use these colors for pie charts or anything that needs to 'get darker'
+	var sequentialColors = KhanUtil.shuffle([ 
+		[ "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000" ], // light yellow -> dark red
+		[ "#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494" ], // light yellow -> dark aqua
+		[ "#feebe2", "#fbb4b9", "#f768a1", "#c51b8a", "#7a0177" ], // light pink -> dark violet
+		[ "#f1eef6", "#bdc9e1", "#74a9cf", "#2b8cbe", "#045a8d" ], // light blue -> dark blue
+		[ "#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c" ]  // light blue -> dark green
+	]);
+	
+	jQuery.extend(KhanUtil,{
+		"colors" : {
+			"qualitative" : qualitativeColors,
+			"sequential" : sequentialColors[0]
+		}
+	});	
+})();
