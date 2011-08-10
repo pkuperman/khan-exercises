@@ -14,39 +14,38 @@ In displaying question use ( Wx === 0 ? "" : Wx)
 
 <body>
 	<div class="exercise">
-		<div class="vars" data-ensure="getGCD(A, B) === 1 && getGCD(C, D) === 1">
+		<div class="vars" data-ensure="getGCD(N1, D1) === 1 && getGCD(N2, D2) === 1">
 			<var id="NEG1">randFromArray([1, -1])</var>
-			<var id="NEG1S">NEG1 === -1 ? "-" : ""</var>
 			<var id="W1">randRange(1, 4)</var>
-			<var id="A">randRange(1, 9)</var>
-			<var id="B">randRange(2, 9)</var>
+			<var id="N1">randRange(1, 20)</var>
+			<var id="D1" data-ensure="N1 !== D1">randRange(2, 20)</var>
 
 			<var id="NEG2">randFromArray([1, -1])</var>
-			<var id="NEG2S">NEG2 === -1 ? "-" : ""</var>
 			<var id="W2">randRange(1, 4)</var>
-			<var id="C">randRange(1, 9)</var>
-			<var id="D">randRange(2, 9)</var>
+			<var id="N2">randRange(1, 20)</var>
+			<var id="D2" data-ensure="N2 !== D2">randRange(2, 20)</var>
 
-			<var id="WT">((NEG1 * NEG2 * (W1 * B + A) * (W2 * D + C)) - (NEG1 * NEG2 * (W1 * B + A) * (W2 * D + C)) % (B * D) ) / (B * D)</var>
-			<var id="FT">((W1 * B + A) * (W2 * D + C)) % (B * D)</var>
+			<var id="M1">W1 * D1 + N1</var>
+			<var id="M2">W2 * D2 + N2</var>
+
+			<var id="WT">((NEG1 * NEG2 * (W1 * D1 + N1) * (W2 * D2 + N2)) - (NEG1 * NEG2 * (W1 * D1 + N1) * (W2 * D2 + N2)) % (D1 * D2) ) / (D1 * D2)</var>
+			<var id="FT">((W1 * D1 + N1) * (W2 * D2 + N2)) % (D1 * D2)</var>
 		</div>
 
 		<div class="problems">
-			<div id="two-mixed">
-				<p class="problem">Write the following as a mixed number. Simplify your answer to lowest terms.</p>
-				<p class="question"><code>\displaystyle <var>NEG1S</var> <var>W1</var> \frac{<var>A</var>}{<var>B</var>} \times <var>NEG2S</var> <var>W2</var> \frac{<var>C</var>}{<var>D</var>} = ?</code></p>
-				<div class="solution" data-type="multiple">
-					<p><span class="sol" data-type="text"><var>WT</var></span> 
-					   <span class="sol" data-type="rational"><var>FT /(B * D)</var></span></p>
-				</div>
+			<div>
+				<p class="problem">Write the following as a mixed number. Reduce to lowest terms.</p>
+				<p class="question"><code><var>NEG1 * W1 + fraction( N1 , D1 )</var> \times <var>NEG2 * W2 + fraction( N2 , D2 )</var> = {?}</code></p>
+				<div class="solution" data-type="mixed"><var>WT + FT /(D1 * D2)</var></div>
 			</div>
 		</div>
 
 		<div class="hints">
-			<p><code>\displaystyle {} = <code>\displaystyle <var>NEG1S</var> \frac{<var>(W1 * B + A)</var>}{<var>B</var>} \times <var>NEG2S</var> \frac{<var>(W2 * D + C)</var>}{<var>D</var>}</code></code> (convert mixed numbers to fractions)</p>
-			<p><code>\displaystyle {} = \frac{<var>NEG1 * (W1 * B + A)</var> \times <var>NEG2 * (W2 * D + C)</var>}{<var>B</var> \times <var>D</var>}</code> (combine into a single fraction)</p>
-			<p><code>\displaystyle {} = \frac{<var>(NEG1 * NEG2 * (W1 * B + A) * (W2 * D + C))</var>}{<var>(B * D)</var>}</code> (reduce terms <-- Not done yet)</p>
-			<p data-if="getGCD(NEG1 * A * NEG2 * D, B * C) !== 1 || NEG1 * NEG2 === -1"><code>\displaystyle {} = <var>WT</var> <var>fractionReduce(FT, B * D)</var></code> (Simplify)</p>
+			<p><code>= <var>fraction( NEG1 * W1 * D1 + NEG1 * N1 , D1)</var> \times <var>fraction( NEG2 * W2 * D2 + NEG2 * N2 , D2)</var></code> (convert mixed numbers to fractions)</p>
+
+			<p><code>= \frac{<var>NEG1 * (W1 * D1 + N1)</var> \times <var>NEG2 * (W2 * D2 + N2)</var>}{<var>D1</var> \times <var>D2</var>}</code> (combine into a single fraction)</p>
+			<p><code>\displaystyle {} = \frac{<var>(NEG1 * NEG2 * (W1 * D1 + N1) * (W2 * D2 + N2))</var>}{<var>(D1 * D2)</var>}</code> (reduce terms <-- Not done yet)</p>
+			<p data-if="getGCD(NEG1 * N1 * NEG2 * D2, D1 * N2) !== 1 || NEG1 * NEG2 === -1"><code>\displaystyle {} = <var>WT</var> <var>fractionReduce(FT, D1 * D2)</var></code> (Simplify)</p>
 		</div>
 	</div>
 </body>
