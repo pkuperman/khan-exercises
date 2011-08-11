@@ -200,6 +200,51 @@ function Translator( center, r, pro ) {
 	return this;
 }
 
+
+
+function analogClock( hour, minute, radius, labelShown ){
+	this.hour = hour;
+	this.minute = minute;
+	this.radius = radius;
+	this.set = KhanUtil.currentGraph.raphael.set();
+
+	this.graph = KhanUtil.currentGraph;
+	this.draw = function(){
+		for( var x = 0; x < 12; x++ ){
+			this.set.push( this.graph.line( [ this.radius *  Math.sin( 2 * Math.PI * x/12  ), this.radius * Math.cos( 2 * Math.PI * x/12 ) ], [ 0.8 * this.radius * Math.sin( 2 * Math.PI * x/12 ), 0.8 * this.radius * Math.cos( 2 * Math.PI * x/12 ) ] ) );
+		}
+
+		this.set.push( this.graph.line( [ 0.45 * this.radius *  Math.sin( 2 * Math.PI * this.hour/12 + ( this.minute / 60 ) / 12 * 2 * Math.PI ), 0.45 * this.radius * Math.cos( 2 * Math.PI * this.hour/12 + ( this.minute / 60 ) / 12  * 2 * Math.PI ) ], [ 0, 0  ] ) );
+
+		this.set.push( this.graph.line( [ 0.7 * this.radius *  Math.sin( ( this.minute / 60 ) * 2 * Math.PI ), 0.7 * this.radius * Math.cos(  ( this.minute / 60 ) * 2 * Math.PI ) ], [ 0, 0  ] ) );
+		this.set.push( this.graph.circle( [ 0, 0 ], this.radius ) );
+
+		if( labelShown ){
+			this.drawLabels();
+		}
+		return this.set;
+	}
+
+	this.drawLabels = function(){
+		for( var x = 1; x < 13; x++ ){
+			this.set.push( this.graph.label( [ 0.7 * this.radius *  Math.sin( 2 * Math.PI * x/12  ), 0.7 * this.radius * Math.cos( 2 * Math.PI * x/12 ) ], x  ) );
+		}
+		return this.set;
+	}
+}
+
+
+function rectchart( divisions, colors, radius ) {
+	var graph = KhanUtil.currentGraph;
+	var set = graph.raphael.set();
+
+	var sum = 0;
+	jQuery.each( divisions, function( i, slice ) {
+		sum += slice;
+	} );
+
+}
+
 function Protractor( center, r ) {
 	var graph = KhanUtil.currentGraph;
 	this.set = graph.raphael.set();
@@ -436,29 +481,3 @@ function changeIntercept( dir ) {
 		+ ( dir * graph.BD / graph.INCR );
 	updateEquation();
 }
-
-(function(){
-	// Colorblind-safe set of colors from colorbrewer.org
-	var qualitativeColors = KhanUtil.shuffle([
-		"#33a02c", // dark green
-		"#b2df8a", // light green
-		"#6495ed", // cornflower blue
-		"#a6cee3"  // light blue
-	]);
-	
-	// You can use these colors for pie charts or anything that needs to 'get darker'
-	var sequentialColors = KhanUtil.shuffle([ 
-		[ "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000" ], // light yellow -> dark red
-		[ "#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494" ], // light yellow -> dark aqua
-		[ "#feebe2", "#fbb4b9", "#f768a1", "#c51b8a", "#7a0177" ], // light pink -> dark violet
-		[ "#f1eef6", "#bdc9e1", "#74a9cf", "#2b8cbe", "#045a8d" ], // light blue -> dark blue
-		[ "#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c" ]  // light blue -> dark green
-	]);
-	
-	jQuery.extend(KhanUtil,{
-		"colors" : {
-			"qualitative" : qualitativeColors,
-			"sequential" : sequentialColors[0]
-		}
-	});	
-})();
