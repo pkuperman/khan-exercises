@@ -32,7 +32,6 @@ jQuery.extend( KhanUtil, {
 	//		- return "NUMBER word"
 	plural: (function() {
 		var oneOffs = {
-			'foot': 'feet',
 			'quiz': 'quizzes',
 			'shelf': 'shelves',
 			'loaf': 'loaves',
@@ -218,57 +217,30 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 		"cake"
 	]);
 
-	var bugs = KhanUtil.shuffle([
-		"ant",
-		"caterpillar",
-		"beetle",
-		"worm",
-		"snail",
-		"centipede",
-		"ladybug"
+	var fruits = KhanUtil.shuffle([
+		"apple",
+		"banana",
+		"coconut",
+		"eggplant",
+		"kiwi",
+		"lemon",
+		"mango",
+		"nectarine",
+		"orange",
+		"pomegranate",
+		"watermelon"
 	]);
 
-	var lengths = KhanUtil.shuffle([
-		"inch",
-		"foot",
-		"centimeter",
-		"yard",
-		"meter"
-	]);
-
-	var activeTimes = KhanUtil.shuffle([
-		"in P.E. class",
-		"during team practice",
-		"in the morning",
-		"at lunchtime",
-		"in the afternoon"
-	]);
-
-	var clothes = KhanUtil.shuffle([
-		"pair of pants",
-		"shirt",
-		"blouse",
-		"jacket",
-		"tuxedo",
-		"dress"
-	]);
-
-	var metals = KhanUtil.shuffle([
-		"iron",
-		"gold",
-		"platinum",
-		"copper",
-		"silver",
-		"nickel",
-		"aluminum",
-		"zinc"
-	]);
-
-	var weights = KhanUtil.shuffle([
-		"gram",
-		"kilogram",
-		"ounce",
-		"pound"
+	var deskItems = KhanUtil.shuffle([
+		"binder",
+		"crayon",
+		"eraser",
+		"folder",
+		"glue stick",
+		"marker",
+		"notebook",
+		"pencil",
+		"rubber stamp"
 	]);
 
 	jQuery.extend( KhanUtil, {
@@ -348,28 +320,12 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 			return pizzas[i];
 		},
 
-		bug: function( i ) {
-			return bugs[i];
+		fruit: function( i ) {
+			return fruits[i];
 		},
 
-		length: function( i ) {
-			return lengths[i];
-		},
-
-		activeTime: function( i ) {
-			return activeTimes[i];
-		},
-
-		clothing: function( i ) {
-			return clothes[i];
-		},
-
-		metal: function( i ) {
-			return metals[i];
-		},
-
-		weight: function( i ) {
-			return weights[i];
+		deskItem: function( i ) {
+			return deskItems[i];
 		}
 
 	});
