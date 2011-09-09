@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html data-require="math graphie">
+<head>
+	<title>Geometric sequences 1</title>
+	<script src="../khan-exercise.js"></script>
+	<script type="text/javascript">
+		function createSequence( init, mult ) {
+			var array = [];
+			while ( array.length < 10 ) {
+				array.push(init * ( Math.pow( mult , array.length )));
+			}
+			return array;
+		}
+	</script>
+</head>
+
+<body>
+<div class="exercise">
+	<div class="vars">
+		<var id="INIT">randRangeNonZero( -5, 5 )</var>
+		<var id="MULT">randRangeExclude( -8 , 8 , [ -1, 0, 1 ] )</var>
+		<var id="TERM">randRange( 2, 5 )</var>
+		<var id="S_ARRAY">createSequence( INIT, MULT )</var>
+		<var id="SOLN">S_ARRAY[ TERM ]</var>
+		<var id="S_STR">S_ARRAY.slice( 0 , TERM ).concat( "x" , S_ARRAY.slice( TERM + 1 , 10 )).join( ", " )</var>
+	</div>
+
+	<div class="problems">
+		<div id="original" data-weight="1">
+			<p class="problem">In the sequence:</p>
+			<p class="question"><var>S_STR</var></p>
+			<p>... what is the most straightforward value of x?</p>
+			<div class="solution" data-type="decimal"><var>SOLN</var></div>
+
+			<div class="hints">
+				<p>The trick to solve sequences is to see or find the pattern. To find the pattern, let's list the numbers, and find the differences for each pair of numbers.</p>
+				<div>
+					<p>This is called the method of common differences:</p>
+					<div class="graphie" id="differences-tree">
+						init({
+							range: [ [-1, 2 * S_ARRAY.length], [ -2 * 3, 1] ],
+							scale: [30, 30]
+						});
+						
+						for ( var i = 0; i &lt; 10; i++ ) {
+							if (i === TERM) {
+								label( [1 + 2 * i, 0], "x" );
+								circle( [1 + 2 * i, 0], 0.5);
+							} else {
+								label( [1 + 2 * i, 0], S_ARRAY[ i ] );
+							}
+						}
+						for ( var i = 0; i &lt; 9; i++ ) {
+							path( [ [2 * i + 1.2, -0.5], [2 * i + 1.8, -1.5] ] );
+							path( [ [2 * i + 2.2, -1.5], [2 * i + 2.8, -0.5] ] );
+
+							if ( i === TERM - 1 || i === TERM ) {
+								label( [2 + 2 * i, -2], "?" );
+							} else {
+								label( [2 + 2 * i, -2], S_ARRAY[ i + 1 ] - S_ARRAY[ i ] );
+							}
+						}
+						for ( var i = 0; i &lt; 8; i++ ) {
+							path( [ [2 * i + 2.2, -2.5], [2 * i + 2.8, -3.5] ] );
+							path( [ [2 * i + 3.2, -3.5], [2 * i + 3.8, -2.5] ] );
+
+							if ( i === TERM - 2 || i === TERM - 1 || i === TERM ) {
+								label( [3 + 2 * i, -4], "?" );
+							} else {
+								label( [3 + 2 * i, -4], S_ARRAY[ i + 2 ] - S_ARRAY[ i + 1] - S_ARRAY[ i + 1 ] + S_ARRAY[ i ] );
+							}
+						}
+					</div>
+				</div>
+				<p>Through observation, we can see that the difference between each term is 2, so x = 9</p>
+				
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
