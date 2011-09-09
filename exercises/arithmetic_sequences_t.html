@@ -24,7 +24,7 @@
 
 	<div class="problems">
 
-		<div id="term-from-terms" data-weight="1">
+		<div id="original" data-weight="1">
 			<div class="vars">
 				<var id="TERM_1">randRange( 2, 5 )</var>
 				<var id="TERM_2">randRange( TERM_1 + 2, 10 )</var>
@@ -41,24 +41,7 @@
 			</div>
 		</div>
 <!--
-		<div id="term-n" data-weight="1">
-			<div class="vars">
-				<var id="TERM_N">randRange( 8, 20 )</var>
-			</div>
-			<p class="problem">Find <code>a_{<var>TERM_N</var>}</code> for the following sequence:</p>
-			<p class="question"><var>S_ARRAY.slice( 0 , 4 ).join ( ", " )</var>, ...</p>
-			<div class="solution" data-type="text"><var>INIT + ADD * ( TERM_N - 1 )</var></div>
-
-			<div class="hints">
-				<p>The <code>n</code>-th term of an arithmetic sequence can be calculated using <code>a_n = a + (n – 1)d</code>.</p>
-				<p>The initial term or <code>a</code> is <var>INIT</var>.  The difference or <code>d</code> is <var>ADD</var>.</p>
-				<p>Substituting, we get <code>a_{<var>TERM_N</var>} = <var>INIT</var> + (<var>TERM_N</var> – 1)(<var>ADD</var>)</code>.</p>
-				<p><code>a_{<var>TERM_N</var>} = <var>INIT + ADD * ( TERM_N - 1 )</var></code>.</p>
-				
-			</div>
-		</div>
-
-		<div id="term-x" data-weight="1">
+		<div id="original" data-weight="1">
 			<div class="vars">
 				<var id="TERM_X">randRange( 2, 5 )</var>
 				<var id="SOLN">S_ARRAY[ TERM_X ]</var>
