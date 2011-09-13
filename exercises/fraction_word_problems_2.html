@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-require="math graphie graphie-helpers word-problems">
+<html data-require="math math-format word-problems spin">
 <head>
 	<meta charset="UTF-8" />
 	<title>Fraction word problems 2</title>
@@ -7,124 +7,138 @@
 </head>
 <body>
 	<div class="exercise">
-		<div class="vars">
-			<var id="A">randRange( 1, 5 )</var>
-			<var id="B">randRange( 1, 5 )</var>
-			<var id="LEFT">randRange( 1, 5 )</var>
-			<var id="TOTAL">A + B + LEFT</var>
-		</div>
 
 		<div class="problems">
-			<div id="show-total-want-eaten">
+			<div id="plus">
+				<div class="vars">
+					<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
+						<var id="D1">randRange( 3, 20 )</var>
+						<var id="D2">randRange( 3, 20 )</var>
+					</div>
+
+					<div data-ensure="(N1 / D1) + (N2 / D2) < 1">
+						<var id="N1">randRange( 1, D1 - 1 )</var>
+						<var id="N2">randRange( 1, D2 - 1 )</var>
+					</div>
+					
+					<var id="GCD1">getGCD( N1, D1 )</var>
+					<var id="SIMP_N1">N1 / GCD1</var>
+					<var id="SIMP_D1">D1 / GCD1</var>
+					
+					<var id="GCD2">getGCD( N2, D2 )</var>
+					<var id="SIMP_N2">N2 / GCD2</var>
+					<var id="SIMP_D2">D2 / GCD2</var>
+
+					<var id="LCM">getLCM( SIMP_D1, SIMP_D2 )</var>
+					<var id="F1">LCM / SIMP_D1</var>
+					<var id="F2">LCM / SIMP_D2</var>
+					
+				</div>
+
 				<p class="problem">Write as a fraction. Simplify the answer:</p>
-				<p><var>person( 1 )</var> ate <var>plural( A, "slice" )</var> of <var>pizza( 1 )</var>, and <var>person( 2 )</var> ate <var>plural( B, "slice" )</var>.</p>
-				<p class="question">If there were initially <var>TOTAL</var> slices, what fraction of the <var>pizza( 1 )</var> was eaten?</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>(A + B) / TOTAL</var></p>
-				<div class="hints">
-					<p><code>\text{fraction of <var>pizza( 1 )</var> eaten} = \dfrac{\text{number of slices eaten}}{\text{number slices total}}</code></p>
-					<div>
-						<p>They ate <code>\color{#6495ED}{<var>A + B</var>}</code> out of <code><var>TOTAL</var></code> slices.</p>
-						<div class="graphie">
-							init({
-								range: [ [-2, 2], [-2, 2] ],
-								scale: 25
-							});
-							var eaten = A + B;
-							piechart( [ eaten, TOTAL - eaten ], [ "#6495ED", "#FFA500" ], 2 );
-						</div>
-					</div>
-					<p>They ate <code>\dfrac{<var>A + B</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>.</p>
+				<p class="question"><var>person( 1 )</var> watched a <var>bug( 1 )</var> on the sidewalk. It crawled <code><var>fraction( N1, D1 )</var></code> of a <var>smalldistance( 1 )</var>, then rested for a bit, and then crawled <code><var>fraction( N2, D2 )</var></code> of a <var>smalldistance( 1 )</var> farther. How far did the <var>bug( 1 )</var> crawl in all?</p>
+				<p class="solution" data-type="rational"><var>(N1 * LCM / D1 + N2 * LCM / D2) / LCM</var></p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The bug crawled a total distance of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( smalldistance( 1 ))</var>.</p>
 				</div>
 			</div>
 
-<!--
-			<div id="show-left-want-eaten">
-				<p class="problem"><var>person( 1 )</var> ate <var>plural( A, "slice" )</var> of <var>pizza( 1 )</var>, and <var>person( 2 )</var> ate <var>plural( B, "slice" )</var>.</p>
-				<p class="question">If there were <var>plural(LEFT, "slice")</var> remaining, what fraction of the <var>pizza( 1 )</var> was eaten?</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>(A + B) / TOTAL</var></p>
-				<div class="hints">
-					<p><code>\text{fraction of <var>pizza( 1 )</var> eaten} = \dfrac{\text{number of slices eaten}}{\text{number slices total}}</code></p>
-					<p>Since they ate <var>A + B</var> slices of <var>pizza( 1 )</var> with <var>plural( LEFT, "slice" )</var> remaining, they must have begun with <var>TOTAL</var> slices.</p>
-					<div>
-						<p>They ate <code>\color{#6495ED}{<var>A + B</var>}</code> out of <code><var>TOTAL</var></code> slices.</p>
-						<div class="graphie">
-							init({
-								range: [ [-2, 2], [-2, 2] ],
-								scale: 25
-							});
-							var eaten = A + B;
-							piechart( [ eaten, TOTAL - eaten ], [ "#6495ED", "#FFA500" ], 2 );
-						</div>
-					</div>
-					<p>They ate <code>\dfrac{<var>A + B</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>.</p>
+			<div data-type="plus">
+				<p class="question">On a hot day, <var>person( 1 )</var> poured <code><var>fraction( N1, D1 )</var></code> of a bucket of water into a plastic wading pool.  A while later, <var>he( 1 )</var> added another <code><var>fraction( N2, D2 )</var></code> of a bucket.  How much water did <var>person( 1 )</var> pour into the pool?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1"><var>person( 1 )</var> poured a total of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> buckets of water into the pool.</p>
 				</div>
 			</div>
 
-			<div id="show-first-want-eaten">
-				<p class="problem"><var>person( 1 )</var> ate <var>plural( A, "slice" )</var> of <var>pizza( 1 )</var>, and <var>person( 2 )</var> ate <var>plural( B, "slice" )</var>.</p>
-				<p class="question">If <var>person( 1 )</var> ate <code>\dfrac{<var>A</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>, what fraction of the <var>pizza( 1 )</var> was eaten?</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>(A + B) / TOTAL</var></p>
-				<div class="hints">
-					<p>If <var>plural( A, "slice")</var> represent<var>A &gt; 1 ? "" : "s"</var> <code>\dfrac{<var>A</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>, there must have been a total of <var>TOTAL</var> slices.</p>
-					<p><code>\text{fraction of <var>pizza( 1 )</var> eaten} = \dfrac{\text{number of slices eaten}}{\text{number slices total}}</code></p>
-					<div>
-						<p>They ate <code>\color{#6495ED}{<var>A + B</var>}</code> out of <code><var>TOTAL</var></code> slices.</p>
-						<div class="graphie">
-							init({
-								range: [ [-2, 2], [-2, 2] ],
-								scale: 25
-							});
-							var eaten = A + B;
-							piechart( [ eaten, TOTAL - eaten ], [ "#6495ED", "#FFA500" ], 2 );
-						</div>
-					</div>
-					<p>They ate <code>\dfrac{<var>A + B</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>.</p>
+			<div data-type="plus">
+				<p class="question"><var>person( 1 )</var> jogged <code><var>fraction( N1, D1 )</var></code> of a lap <var>activeTime( 1 )</var> and <code><var>fraction( N2, D2 )</var></code> of a lap <var>activeTime( 2 )</var>. How many laps did <var>person( 1 )</var> jog in all?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1"><var>person( 1 )</var> jogged a total of <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> laps in all.</p>
 				</div>
 			</div>
 
-			<div id="show-total-want-left">
-				<p class="problem"><var>person( 1 )</var> ate <var>plural( A, "slice" )</var> of <var>pizza( 1 )</var>, and <var>person( 2 )</var> ate <var>plural( B, "slice" )</var>.</p>
-				<p class="question">If there were initially <var>TOTAL</var> slices, what fraction of the <var>pizza( 1 )</var> is remaining?</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>LEFT / TOTAL</var></p>
-				<div class="hints">
-					<p><code>\text{fraction of <var>pizza( 1 )</var> remaining} = \dfrac{\text{number of slices remaining}}{\text{number slices total}}</code></p>
-					<div>
-						<p>Together they ate <var>A + B</var> slices, which leaves <var>LEFT</var> out of <var>TOTAL</var> slices remaining.</p>
-						<div class="graphie">
-							init({
-								range: [ [-2, 2], [-2, 2] ],
-								scale: 25
-							});
-							var remaining = TOTAL - A - B;
-							piechart( [ remaining, TOTAL - remaining ], [ "#FFA500", "#6495ED" ], 2 );
-						</div>
+			<div id="minus">
+				<div class="vars">
+					<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
+						<var id="D1">randRange( 3, 20 )</var>
+						<var id="D2">randRange( 3, 20 )</var>
 					</div>
-					<p>There is <code>\dfrac{<var>LEFT</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var> remaining.</p>
+
+					<div data-ensure="(N1 / D1) + (N2 / D2) > 0">
+						<var id="N1">randRange( 1, D1 - 1 )</var>
+						<var id="N2">randRange( -D2 + 1, -1 )</var>
+					</div>
+					
+					<var id="GCD1">getGCD( N1, D1 )</var>
+					<var id="SIMP_N1">N1 / GCD1</var>
+					<var id="SIMP_D1">D1 / GCD1</var>
+					
+					<var id="GCD2">getGCD( N2, D2 )</var>
+					<var id="SIMP_N2">N2 / GCD2</var>
+					<var id="SIMP_D2">D2 / GCD2</var>
+
+					<var id="LCM">getLCM( SIMP_D1, SIMP_D2 )</var>
+					<var id="F1">LCM / SIMP_D1</var>
+					<var id="F2">LCM / SIMP_D2</var>
+					
 				</div>
+
+				<p class="problem">Write as a fraction. Simplify the answer:</p>
+				<p class="question">At the beach, <var>person( 1 )</var> and <var>person( 2 )</var> both built sandcastles and then measured their heights. <var>person( 1 )</var>'s sandcastle was <code><var>fraction( N1, D1 )</var></code> of a meter tall and <var>person( 2 )</var>'s was <code><var>fraction( -N2, D2 )</var></code> of a meter tall. <spin>{How much taller was <var>person( 1 )</var>'s sandcastle than <var>person( 2 )</var>'s|What is the difference in heights of the two sandcastles}</spin>?</p>
+				<p class="solution" data-type="rational"><var>(N1 / D1) + (N2 / D2)</var></p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in height of the two sandcastles can be measured as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> meters.</p>
+				</div>
+
+			</div>
+			
+			<div id="metals" data-type="minus">
+				<p class="question"><var>person( 1 )</var> weighed two pieces of metal for an experiment. The piece of <var>metal( 1 )</var> weighed <code><var>fraction( N1, D1 )</var></code> of <var>a(weight( 1 ))</var> and the piece of <var>metal( 2 )</var> weighed <code><var>fraction( -N2, D2 )</var></code> of <var>a( weight( 1 ))</var>. <spin>{How much more did the piece of <var>metal( 1 )</var> weigh than the piece of <var>metal( 2 )</var>|What is the difference in weights of the two metals}</spin>?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in weight of the two metals can be measured as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( weight( 1 ))</var>.</p>
+				</div>
+			</div>
+			
+			<div id="ribbon" data-type="minus">
+				<p class="question"><var>person( 1 )</var> has a <var>color( 1 )</var> ribbon and a <var>color( 2 )</var> ribbon. The <var>color( 1 )</var> ribbon is <code><var>fraction( N1, D1 )</var></code> of a <var>smalldistance( 1 )</var> long and the <var>color( 2 )</var> ribbon is <code><var>fraction( -N2, D2 )</var></code> of a <var>smalldistance( 1 )</var> long. <spin>{How much longer is the <var>color( 1 )</var> ribbon than the <var>color( 2 )</var> ribbon|What is the difference in lengths of the two ribbons}</spin>?</p>
+				<div class="hints" data-apply="appendContents">
+					<p id="hint1">The difference in lengths of the two ribbons can be measured as <code><var>fraction( N1, D1 )</var> + <var>fraction( N2, D2 )</var></code> <var>plural( smalldistance( 1 ))</var>.</p>
+				</div>
+			</div>
+			
+		</div>
+
+		<div class="hints">
+
+			<p id="hint1"></p>
+			<div data-if="GCD1 !== 1 || GCD2 !== 1">
+				<p>Simplify each fraction.</p>
+				<p><code><var>plus( fraction( SIMP_N1, SIMP_D1 ) , fraction( SIMP_N2, SIMP_D2 ))</var></code></p>
+			</div>
+			<p>Find a common denominator by finding the least common multiple of <code><var>SIMP_D1</var></code> and <code><var>SIMP_D2</var></code>.</p>
+			<p><code>\lcm(<var>SIMP_D1</var>, <var>SIMP_D2</var>) = <var>LCM</var></code></p>
+
+			<div>
+				<p>Change each fraction to an equivalent fraction with a denominator of <code><var>LCM</var></code>.</p>
+				<p><code><var>plus( fraction( SIMP_N1, SIMP_D1 ) , fraction( SIMP_N2, SIMP_D2 ))</var></code></p>
+				<p><code>=<var>fraction( SIMP_N1, SIMP_D1 )</var> <span data-if="LCM !== SIMP_D1">\cdot <var>fraction( LCM / SIMP_D1, LCM / SIMP_D1 )</var></span> + <var>fraction( SIMP_N2, SIMP_D2 )</var> <span data-if="LCM !== SIMP_D2">\cdot <var>fraction( LCM / SIMP_D2, LCM / SIMP_D2 )</var></span></code></p>
+			</div>
+			
+			<div>
+				<p>Multiply.</p>
+				<p><code>=<var>plus( fraction( SIMP_N1 * LCM / SIMP_D1, LCM ) , fraction( SIMP_N2 * LCM / SIMP_D2, LCM ))</var></code></p>
+			</div>
+			
+			<div>
+				<p><var>N2 &gt; 0 ? "Add" : "Subtract"</var> the numerators.</p>
+				<p><code>=<var>fraction( SIMP_N1 * LCM / SIMP_D1 + SIMP_N2 * LCM / SIMP_D2, LCM )</var></code></p>
+			</div>
+			
+			<div data-if="getGCD( SIMP_N1 * LCM / SIMP_D1 + SIMP_N2 * LCM / SIMP_D2, LCM ) !== 1">
+				<p>Simplify.</p>
+				<p><code>=<var>fractionReduce( SIMP_N1 * LCM / SIMP_D1 + SIMP_N2 * LCM / SIMP_D2, LCM )</var></code></p>
 			</div>
 
-			<div id="show-first-want-left">
-				<p class="problem"><var>person( 1 )</var> ate <var>plural( A, "slice" )</var> of <var>pizza( 1 )</var>, and <var>person( 2 )</var> ate <var>plural( B, "slice" )</var>.</p>
-				<p class="question">If <var>person( 1 )</var> ate <code>\dfrac{<var>A</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>, what fraction of the <var>pizza( 1 )</var> is remaining?</p>
-				<p class="solution" data-type="rational" data-simplify="optional"><var>LEFT / TOTAL</var></p>
-				<div class="hints">
-					<p>If <var>plural( A, "slice" )</var> represent<var>A &gt; 1 ? "" : "s"</var> <code>\dfrac{<var>A</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var>, there must have been a total of <var>TOTAL</var> slices.</p>
-					<p><code>\text{fraction of <var>pizza( 1 )</var> remaining} = \dfrac{\text{number of slices remaining}}{\text{number slices total}}</code></p>
-					<div>
-						<p>Together they ate <var>A + B</var> slices, which leaves <var>LEFT</var> out of <var>TOTAL</var> slices remaining.</p>
-						<div class="graphie">
-							init({
-								range: [ [-2, 2], [-2, 2] ],
-								scale: 25
-							});
-							var remaining = TOTAL - A - B;
-							piechart( [ remaining, TOTAL - remaining ], [ "#FFA500", "#6495ED" ], 2 );
-						</div>
-					</div>
-					<p>There is <code>\dfrac{<var>LEFT</var>}{<var>TOTAL</var>}</code> of the <var>pizza( 1 )</var> remaining.</p>
-				</div>
-			</div>
--->
 		</div>
 	</div>
 </body>
