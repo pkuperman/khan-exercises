@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-require="math math-format word-problems">
+<html data-require="math math-format spin word-problems">
 <head>
 	<title>Fraction Word Problems 2</title>
 	<script src="../khan-exercise.js"></script>
@@ -43,13 +43,12 @@ Another question: What is the difference in heights of the two sandcastles?
 				<var id="N1">randRange( 1, D1 - 1 )</var>
 				<var id="N2">randRange( 1, D2 - 1 )</var>
 			</div>
-
 		</div>
 
 		<div class="problems">
 			<div id="original">
 				<p class="problem">Write as a fraction. Simplify the answer:</p>
-				<p class="question"><var>person( 1 )</var> watched a <var>bug( 1 )</var> on the sidewalk. It crawled <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var>, then rested for a bit, and then crawled <code><var>fraction( N2, D2 )</var></code> of a <var>length( 1 )</var> farther. How far did the <var>bug( 1 )</var> crawl in all?</p>
+				<p class="question"><var>person( 1 )</var> watched a <var>crop( 1 )</var> on the sidewalk. It crawled <code><var>fraction( N1, D1 )</var></code> of a <var>length( 1 )</var>, then rested for a bit, and then crawled <code><var>fraction( N2, D2 )</var></code> of a <var>length( 1 )</var> farther. How far did the <var>bug( 1 )</var> crawl in all?</p>
 				<p class="solution" data-type="rational"><var>(N1 * LCM / D1 + N2 * LCM / D2) / LCM</var></p>
 
 				<div class="hints" data-apply="appendContents">
