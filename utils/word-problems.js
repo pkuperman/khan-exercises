@@ -37,6 +37,7 @@ jQuery.extend( KhanUtil, {
 	//		- return "word"
 	plural: (function() {
 		var oneOffs = {
+			'child': 'children',
 			'quiz': 'quizzes',
 			'shelf': 'shelves',
 			'loaf': 'loaves',
@@ -133,24 +134,8 @@ jQuery.extend( KhanUtil, {
 
 jQuery.fn[ "word-problemsLoad" ] = function() {
 	var people = KhanUtil.shuffle([
-		["Ashley", "f"],
-		["Brandon", "m"],
-		["Christopher", "m"],
-		["Daniel", "m"],
-		["Emily", "f"],
-		["Gabriela", "f"],
-		["Ishaan", "m"],
-		["Jessica", "f"],
-		["Kevin", "m"],
-		["Luis", "m"],
-		["Michael", "m"],
-		["Nadia", "f"],
-		["Omar", "m"],
-		["Stephanie", "f"],
-		["Tiffany", "f"],
-		["Umaima", "f"],
-		["Vanessa", "f"],
-		["William", "m"]
+		["Asheesh", "m"],
+		["BrandonXXX", "m"]
 	]);
 
 	var vehicles = KhanUtil.shuffle([
