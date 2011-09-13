@@ -1452,6 +1452,15 @@ function prepareSite() {
 		}, function() {
 			// Error during submit. Cheat, for now, and reload the page in
 			// an attempt to get updated data.
+
+			if ( user != null && exerciseName != null ) {
+				// Before we reload, clear out localStorage's UserExercise.
+				// If there' a discrepancy between server and localStorage such that
+				// problem numbers are out of order or anything else, we want
+				// to restart with whatever the server sends back on reload.
+				delete window.localStorage[ "exercise:" + user + ":" + exerciseName ];
+			}
+
 			window.location.reload();
 		});
 
@@ -1459,7 +1468,7 @@ function prepareSite() {
 			// Correct answer, so show the next question button.
 			jQuery( "#check-answer-button" ).hide();
 			if ( !testMode || Khan.query.test == null ) {
-				jQuery( "#next-container" ).show();
+				jQuery( "#next-question-button" ).show();
 				jQuery( "#next-question-button" ).removeAttr( "disabled" )
 					.removeClass( "buttonDisabled" )
 					.focus();
@@ -1490,7 +1499,7 @@ function prepareSite() {
 
 		// Toggle the navigation buttons
 		jQuery("#check-answer-button").show();
-		jQuery("#next-question-button").blur().parent().hide();
+		jQuery("#next-question-button").blur().hide();
 
 		// Wipe out any previous problem
 		jQuery("#workarea").hide();
