@@ -327,6 +327,17 @@ jQuery.fn[ "word-problemsLoad" ] = function() {
 		{present:"walk", past:"walked", noun:"dog", done:"walked", continuous:"walking"}
 	]);
 
+	var bugs = KhanUtil.shuffle([
+		"ant",
+		"caterpillar",
+		"beetle",
+		"worm",
+		"snail",
+		"centipede",
+		"stick bug",
+		"ladybug"
+	]);
+	
 	var indefiniteArticle = function(word) {
 		var vowels = ['a', 'e', 'i', 'o', 'u'];
 		if ( vowels.indexOf( word[0].toLowerCase() ) > -1 ) {
