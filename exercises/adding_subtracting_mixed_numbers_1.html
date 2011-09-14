@@ -5,14 +5,6 @@
 	<script src="../khan-exercise.js"></script>
 </head>
 
-<!--
-NEED TO ADD COLOR TO HINTS
-17 2/9 + 5 1/9 = 17 + 5 + 2/9 + 1/9
-black-----------red  grey red grey (plus signs are black)
-
-NEED TO ADD 2-4 #s, NOT JUST 2
--->
-
 <body>
 	<div class="exercise">
 
@@ -22,8 +14,8 @@ NEED TO ADD 2-4 #s, NOT JUST 2
 
 					<var id="PM">randRangeNonZero( -1, 1 )</var>
 					<var id="SIGN">( PM === 1 ? "+" : "-")</var>
-					<var id="WHOLE1">randRange( 2, 19 )</var>
-					<var id="WHOLE2">( PM === 1 ? randRange( 1, 19 ) : randRange( -WHOLE1 + 1, -1 ))</var>
+					<var id="W1">randRange( 2, 19 )</var>
+					<var id="W2">( PM === 1 ? randRange( 1, 19 ) : randRange( -W1 + 1, -1 ))</var>
 
 					<div data-ensure="getLCM( D1, D2 ) < 61 && D1 !== D2">
 						<var id="D1">randRange( 3, 20 )</var>
@@ -39,15 +31,34 @@ NEED TO ADD 2-4 #s, NOT JUST 2
 				</div>
 
 				<p class="problem">Write the following as a mixed number. Simplify your answer to lowest terms.</p>
-				<p class="question"><code><var>expr(["+", WHOLE1 + fraction( N1, D1 ), WHOLE2 + fraction( N2, D2 )])</var> = ?</code></p>
-				<div class="solution" data-type="mixed"><var>WHOLE1 + WHOLE2 + N1 / D1 + PM * N2 / D2</var></div>
+				<p class="question"><code><var>expr(["+", W1 + fraction( N1, D1 ), W2 + fraction( N2, D2 )])</var> = {?}</code></p>
+				<div class="solution" data-type="mixed"><var>W1 + W2 + N1 / D1 + PM * N2 / D2</var></div>
 
 				<div class="hints">
-					<p><code><var>expr(["+", WHOLE1, fraction( N1, D1 ), WHOLE2, fraction( PM * N2, D2 )])</var></code> (separate the terms)</p>
-					<p><code><var>expr(["+", WHOLE1, WHOLE2, fraction( N1, D1 ), fraction( PM * N2, D2 )])</var></code> (put whole #s and fractions together)</p>
-					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 * LCM / D1, LCM ),fraction( PM * N2 * LCM / D2, LCM  )])</var></code> (find a common denominator for the fractions)</p>
-					<p><code><var>expr(["+", WHOLE1 + WHOLE2, fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )])</var> = <var>WHOLE1 + WHOLE2 + fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code> (Calculate each part, then combine)</p>
-					<p data-if="GCD > 1">Simplifying to lowest terms, <code><var>WHOLE1 + WHOLE2 + fractionReduce( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code>.</p>
+					<div>
+						<p>Separate the terms:</p>
+						<p><code>= \color{red}{<var>W1</var>} + \color{red}{<var>fraction( N1, D1 )</var>} <var>SIGN</var> \color{blue}{<var>abs( W2 )</var>} <var>SIGN</var> \color{blue}{<var>fraction( N2, D2 )</var>}</code></p>
+					</div>
+					
+					<div>
+						<p>Put whole #s and fractions together:</p>
+						<p><code>= \color{red}{<var>W1</var>} <var>SIGN</var> \color{blue}{<var>abs( W2 )</var>} + \color{red}{<var>fraction( N1, D1 )</var>} <var>SIGN</var> \color{blue}{<var>fraction( N2, D2 )</var>}</code></p>
+					</div>
+					
+					<div>
+						<p>Find a common denominator for the fractions:</p>
+						<p><code>= <var>expr(["+", W1 + W2, fraction( N1 * LCM / D1, LCM ),fraction( PM * N2 * LCM / D2, LCM  )])</var></code></p>
+					</div>
+					
+					<div>
+						<p>Calculate each part, then combine:</p>
+						<p><code>= <var>expr(["+", W1 + W2, fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )])</var> = <var>W1 + W2 + fraction( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code></p>
+					</div>
+					
+					<div data-if="GCD > 1">
+						<p>Simplify to lowest terms:</p>
+						<p><code>= <var>W1 + W2 + fractionReduce( N1 * LCM / D1 + PM * N2 * LCM / D2, LCM )</var></code></p>
+					</div>
 				</div>
 			</div>
 		</div>
