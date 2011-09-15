@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html data-require="math math-format">
+<head>
+	<title>Number properties terminology</title>
+	<script src="../khan-exercise.js"></script>
+</head>
+
+<!--
+Number Properties Terminology
+Common Core CC.6.EE.3
+
+Requirements:
+
+a) Three problem categories with two problem types each:
+Associative
+Commutative
+Distributive
+
+
+b) Multiple-choice type
+c) In a streak, all three properties and each problem type should be tested at least once.
+
+
+
+Problem set definitions:
+
+1. Associative
+
+Second problem type:
+Which one of the following equations represents the Associative property of numbers:
+a+b(c+d) = a+bc+bd
+a+b = b+a
+a+(b+c) = a+b+c
+none of the above
+
+
+2. Commutative
+First problem type:
+a+b = b+a represents which one of the following properties of numbers:
+Associative
+Commutative
+Distributive
+None of the above
+
+Note: option to mix the order of the four listed above.  Also, replace variables with positive integers.
+
+Second problem type:
+Which one of the following equations represents the Commutative property of numbers:
+a+b(c+d) = a+bc+bd
+a+b = b+a
+a+(b+c) = a+b+c
+none of the above
+
+
+
+3. Distributive
+First problem type:
+a+b(c+d) = a+bc+bd represents which one of the following properties of numbers:
+Associative
+Commutative
+Distributive
+None of the above
+
+Note: option to mix the order of the four listed above.  Also, replace variables with positive integers.
+
+Second problem type:
+Which one of the following equations represents the Distributive property of numbers:
+a+b(c+d) = a+bc+bd
+a+b = b+a
+a+(b+c) = a+b+c
+none of the above
+
+-->
+<body>
+<div class="exercise">
+	<div class="vars">
+		<var id="A">randRange( 2, 9 )</var>
+		<var id="B" data-ensure="A != B">randRange( 2, 9 )</var>
+		<var id="C" data-ensure="A != C && B != C">randRange( 2, 9 )</var>
+		<var id="D" data-ensure="A != D && B != D && C != D">randRange( 2, 9 )</var>
+	</div>
+
+	<div class="problems">
+		<div id="assoc-id">
+<!--
+First problem type:
+
+
+None of the above
+-->
+			<p class="question"><code><var>plus(A+(b+c) = a+b+c represents which one of the following properties of numbers:</p>
+			<div class="solution">Associative</div>
+			<ul class="choices" data-show="4" data-category="true" data-none="true">
+				<li>Commutative</li>
+				<li>Distributive</li>
+			</ul>
+			
+			<div class="hints">
+				<p><code><var>PCT</var>\%</code> literally means <code><var>PCT</var></code> per 100</p>
+				<p><code><var>PCT</var>\%</code> = <code>\dfrac{<var>PCT</var>}{<var>100</var>}</code></p>
+				<p>To easily divide by 100, you can just move the decimal point two places to the left.</p>
+				<p><code><var>PCT</var> \rightarrow <var>roundTo( 5, PCT / 10 )</var> \rightarrow <var>SOLN</var></code></p>
+				<p>So <code><var>PCT</var>\%</code> = <code><var>SOLN</var></code><p>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
