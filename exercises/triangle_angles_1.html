@@ -19,7 +19,7 @@
 			var sa = KhanUtil.randRange( 4, 8 );
 			var sb = sa * Math.sin( b * Math.PI / 180 )  / Math.sin( a * Math.PI / 180 );
 			var sc = sa * Math.sin( c * Math.PI / 180 )  / Math.sin( a * Math.PI / 180 );
-				return [ [ a, b, c ] , [ sa.toFixed( 1 ), sb.toFixed( 1 ), sc.toFixed( 1 ) ] ];
+				return [ [ a, b, c ] , [ sc.toFixed( 1 ),  sa.toFixed( 1 ), sb.toFixed( 1 ) ] ];
 		}
 		function eqTriangle(){
 			var a = KhanUtil.randRange( 4, 8 );
@@ -32,7 +32,7 @@
 			var sa = KhanUtil.randRange( 4, 8 );
 			var sc = sa * Math.sin( c * Math.PI / 180 )  / Math.sin( a * Math.PI / 180 );
 			var ang =  [ a, a, c ];
-			var sides = [ sa, sa,  sc.toFixed( 1 ) ];
+			var sides = [ sc.toFixed( 1 ), sa,  sa ];
 			return [ ang , sides ];
 			
 		}
@@ -54,7 +54,7 @@
 						init({
 							range: [ [-1, 10 ], [ -8, 1 ] ]
 						})
-						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], [ 1, 1, 1], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "CAB" : TRIANGLE[ 0 ][ 0 ]  + "^{\\circ}", "ABC" : TRIANGLE[ 0 ][ 1 ] + "^{\\circ}", "BCA" : "X" } );
+						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], 5, { "sides" : TRIANGLE[ 1 ], "CAB" : TRIANGLE[ 0 ][ 0 ]  + "^{\\circ}", "ABC" : TRIANGLE[ 0 ][ 1 ] + "^{\\circ}", "BCA" : "X" } );
 						tr.draw();
 						tr.rotate( randRange( 0, 90 ), 3, -3 );
 						tr.drawLabels();
@@ -77,7 +77,7 @@
 						init({
 							range: [ [-1, 10 ], [ -8, 1 ] ]
 						})
-						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], [ 1, 1, 1], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "CAB" : TRIANGLE[ 0 ][ 0 ] + "^{\\circ}", "BCA" : "X" } );
+						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "CAB" : TRIANGLE[ 0 ][ 0 ] + "^{\\circ}", "BCA" : "X" } );
 						tr.draw();
 						tr.rotate( randRange( 0, 90 ), 3, -3 );
 						tr.drawLabels();
@@ -105,7 +105,7 @@
 						init({
 							range: [ [-1, 10 ], [ -8, 1 ] ]
 						})
-						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], [ 1, 1, 1], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "BCA" : TRIANGLE[ 0 ][ 2 ] + "^{\\circ}" , "ABC" : "X" } );
+						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "BCA" : TRIANGLE[ 0 ][ 2 ] + "^{\\circ}" , "ABC" : "X" } );
 						tr.draw();
 						tr.rotate( randRange( 0, 90 ), 3, -3 );
 						tr.drawLabels();
@@ -134,7 +134,7 @@
 						init({
 							range: [ [-1, 10 ], [ -8, 1 ] ]
 						})
-						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], [ 1, 1, 1], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "CAB" : TRIANGLE[ 0 ][ 0 ]+ "^{\\circ}", "ABC" : "X" } );
+						var tr = new Triangle( [ 3, -4 ],  TRIANGLE[ 0 ], 5, { "a" : TRIANGLE[ 1 ][ 0 ], "b" : TRIANGLE[ 1 ][ 1 ], "c" : TRIANGLE[ 1 ][ 2 ], "CAB" : TRIANGLE[ 0 ][ 0 ]+ "^{\\circ}", "ABC" : "X" } );
 						tr.draw();
 						tr.rotate( randRange( 0, 90 ), 3, -3 );
 						tr.drawLabels();
